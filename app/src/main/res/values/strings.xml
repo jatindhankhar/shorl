@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Shorl</string>
+    <string name="title_activity_login">"Shorl - Sign in "</string>
+</resources>
