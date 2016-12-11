@@ -4,15 +4,12 @@
     <item
         android:drawable="@android:color/white"/>
 
-    <!-- <item>
+     <item>
         <bitmap
             android:gravity="center"
             android:src="@mipmap/ic_launcher"/>
-    </item> -->
-    <item
-        android:gravity="center"
-        android:drawable="@drawable/logo_big"
-        />
+    </item>
+
 
 
 
