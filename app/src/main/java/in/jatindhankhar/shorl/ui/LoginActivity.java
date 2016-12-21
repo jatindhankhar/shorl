@@ -33,6 +33,9 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     public static final String PREF_FILE = "ShorlPref"; // TODO - Set name programmatically
     public static final String IS_LOGGED_IN = "IS_LOGGED_IN";
     public static final String URL_SHORTNER_SCOPE = "oauth2: https://www.googleapis.com/auth/urlshortener";
+    public static final String ARG_IS_ADDING_NEW_ACCOUNT = "";
+    public static final String ARG_AUTH_TYPE = "";
+    public static final String ARG_ACCOUNT_TYPE = "";
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.sign_in_button)
