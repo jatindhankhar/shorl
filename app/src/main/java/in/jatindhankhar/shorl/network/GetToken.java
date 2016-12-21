@@ -11,6 +11,8 @@ import com.google.android.gms.auth.UserRecoverableAuthException;
 
 import java.io.IOException;
 
+import in.jatindhankhar.shorl.model.AsyncResponse;
+
 /**
  * Created by jatin on 12/12/16.
  */
@@ -21,12 +23,14 @@ public class GetToken extends AsyncTask<Void,Void,String> {
     private Context mAppContext;
     private Account mAccountName;
     private String AUTH_TOKEN_TYPE;
+    public AsyncResponse delegate  = null;
 
-    public GetToken(Context mAppContext,Account mAccountName,String AUTH_TOKEN_TYPE)
+    public GetToken(Context mAppContext,Account mAccountName,String AUTH_TOKEN_TYPE,AsyncResponse delegate)
     {
         this.mAppContext = mAppContext;
         this.mAccountName = mAccountName;
         this.AUTH_TOKEN_TYPE = AUTH_TOKEN_TYPE;
+        this.delegate = delegate;
     }
     @Override
     protected String doInBackground(Void... params) {
@@ -47,5 +51,12 @@ public class GetToken extends AsyncTask<Void,Void,String> {
          e.printStackTrace();
      }
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(String s) {
+        //super.onPostExecute(s);
+        delegate.processFinish(s);
+
     }
 }

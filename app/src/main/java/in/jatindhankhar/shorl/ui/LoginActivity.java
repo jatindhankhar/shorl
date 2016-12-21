@@ -9,14 +9,17 @@ import android.support.annotation.StringDef;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Scope;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,6 +32,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private static final String TAG = LoginActivity.class.getSimpleName();
     public static final String PREF_FILE = "ShorlPref"; // TODO - Set name programmatically
     public static final String IS_LOGGED_IN = "IS_LOGGED_IN";
+    public static final String URL_SHORTNER_SCOPE = "oauth2: https://www.googleapis.com/auth/urlshortener";
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.sign_in_button)
@@ -46,7 +50,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
+                .requestEmail().requestId()
                 .build();
         // Build a GoogleApiClient with access to the Google Sign-In API and the
         // options specified by gso.
@@ -70,7 +74,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
 
     @OnClick(R.id.sign_in_button)
-    private void signIn() {
+    public void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -90,6 +94,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
+            Toast.makeText(mContext, "Server Auth Token --> " +acct.getServerAuthCode() , Toast.LENGTH_SHORT).show();
+            Log.d(TAG,"Server Auth Token --> " +acct.getServerAuthCode());
             //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
             updateUI(true);
         } else {
