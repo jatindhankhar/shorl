@@ -36,6 +36,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private static final String TAG = LoginActivity.class.getSimpleName();
     public static final String PREF_FILE = "ShorlPref"; // TODO - Set name programmatically
     public static final String IS_LOGGED_IN = "IS_LOGGED_IN";
+    public static final String ACCOUNT_NAME = "ACCOUNT_NAME";
     public static final String URL_SHORTNER_SCOPE = "oauth2: https://www.googleapis.com/auth/urlshortener";
     public final static String ARG_ACCOUNT_TYPE = "ACCOUNT_TYPE";
     public final static String ARG_AUTH_TYPE = "AUTH_TYPE";
@@ -51,6 +52,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private Context mContext;
     private AccountManager mAccountManager;
     private String mAuthTokenType;
+    public String mAccountName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +115,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
+            mAccountName =  acct.getDisplayName();
             //Toast.makeText(mContext, "Server Auth Token --> " +acct.getServerAuthCode() , Toast.LENGTH_SHORT).show();
             //Log.d(TAG,"Server Auth Token --> " +acct.getServerAuthCode());
             //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
@@ -139,6 +142,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     public void setLoginSession()
     {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(PREF_FILE,mContext.MODE_PRIVATE);
+        sharedPreferences.edit().putString(ACCOUNT_NAME,mAccountName).apply();
         sharedPreferences.edit().putBoolean(IS_LOGGED_IN,true).apply();
     }
 
@@ -151,7 +155,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     @Override
     public void processFinish(String output) {
 
-        final Account account = new Account("Jatin", "in.jatindhankhar.shorl");
+        final Account account = new Account(mAccountName, "in.jatindhankhar.shorl");
         if (getIntent().getBooleanExtra(ARG_IS_ADDING_NEW_ACCOUNT, false)) {
 
             String authtokenType = mAuthTokenType;
