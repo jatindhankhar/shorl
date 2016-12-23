@@ -13,6 +13,7 @@ import in.jatindhankhar.shorl.ui.ShorlAuthenticator;
 
 public class ShorlAuthenticatorService extends Service {
     @Nullable
+
     @Override
     public IBinder onBind(Intent intent) {
         ShorlAuthenticator shorlAuthenticator = new ShorlAuthenticator(this);
