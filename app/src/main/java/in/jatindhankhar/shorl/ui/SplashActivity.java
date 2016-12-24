@@ -9,6 +9,9 @@ import android.util.Log;
 
 import com.facebook.stetho.Stetho;
 
+import in.jatindhankhar.shorl.utils.Constants;
+import in.jatindhankhar.shorl.utils.Utils;
+
 import static android.R.attr.accountType;
 
 
@@ -38,23 +41,20 @@ public class SplashActivity extends AppCompatActivity {
 
         mContext = getApplicationContext();
 
+
         // Launch correct activity bases on the user session state
-        if(isLoggedIn())
+        if(Utils.isLoggedIn(mContext))
         {
             startActivity(new Intent(this,MainActivity.class));}
         else
         {
             Intent intent = new Intent(this,LoginActivity.class);
-            intent.putExtra(LoginActivity.ARG_IS_ADDING_NEW_ACCOUNT, true);
+            intent.putExtra(Constants.ARG_IS_ADDING_NEW_ACCOUNT, true);
             startActivity(new Intent(this,LoginActivity.class));}
 
         finish();
 
     }
 
-    private boolean isLoggedIn()
-    {
 
-        return mContext.getSharedPreferences(LoginActivity.PREF_FILE,mContext.MODE_PRIVATE).getBoolean(LoginActivity.IS_LOGGED_IN,false);
-    }
 }

@@ -17,6 +17,8 @@ import com.squareup.okhttp.Response;
 import java.io.IOException;
 import java.net.Proxy;
 
+import in.jatindhankhar.shorl.ui.LoginActivity;
+
 /**
  * Created by jatin on 12/23/16.
  */
@@ -48,7 +50,6 @@ public class TokenAuthenticator implements Authenticator, GoogleApiClient.OnConn
 
     @Override
     public Request authenticate(Proxy proxy, Response response) throws IOException {
-
         return null;
     }
 

@@ -29,21 +29,17 @@ import butterknife.OnClick;
 import in.jatindhankhar.shorl.R;
 import in.jatindhankhar.shorl.model.AsyncResponse;
 import in.jatindhankhar.shorl.network.GetToken;
+import in.jatindhankhar.shorl.utils.Constants;
+import in.jatindhankhar.shorl.utils.Utils;
+
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, AsyncResponse {
 
-    private static final int RC_SIGN_IN = 9001;
+
     private static final String TAG = LoginActivity.class.getSimpleName();
-    public static final String PREF_FILE = "ShorlPref"; // TODO - Set name programmatically
-    public static final String IS_LOGGED_IN = "IS_LOGGED_IN";
-    public static final String ACCOUNT_NAME = "ACCOUNT_NAME";
-    public static final String URL_SHORTNER_SCOPE = "oauth2: https://www.googleapis.com/auth/urlshortener";
-    public final static String ARG_ACCOUNT_TYPE = "ACCOUNT_TYPE";
-    public final static String ARG_AUTH_TYPE = "AUTH_TYPE";
-    public final static String ARG_ACCOUNT_NAME = "ACCOUNT_NAME";
-    public final static String ARG_IS_ADDING_NEW_ACCOUNT = "IS_ADDING_ACCOUNT";
-    final private String URL_API = "https://www.googleapis.com/auth/urlshortener";
-    final private Scope URL_SCOPE= new Scope(URL_API);
+    private static final int ACCOUNT_CODE = 1601;
+
+    final private Scope URL_SCOPE = new Scope(Constants.URL_API);
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.sign_in_button)
@@ -53,6 +49,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private AccountManager mAccountManager;
     private String mAuthTokenType;
     public String mAccountName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,11 +72,13 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
         // Prepare the account manager
         mAccountManager = AccountManager.get(mContext);
-        String accountName = getIntent().getStringExtra(ARG_ACCOUNT_NAME);
-        mAuthTokenType = getIntent().getStringExtra(ARG_AUTH_TYPE);
+        String accountName = getIntent().getStringExtra(Constants.ARG_ACCOUNT_NAME);
+        mAuthTokenType = getIntent().getStringExtra(Constants.ARG_AUTH_TYPE);
+        chooseAccount();
         if (mAuthTokenType == null)
              mAuthTokenType ="Full access";
         signInButton.setSize(SignInButton.SIZE_WIDE);
+
     }
 
     @Override
@@ -97,14 +96,14 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     @OnClick(R.id.sign_in_button)
     public void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        startActivityForResult(signInIntent, Constants.RC_SIGN_IN);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == Constants.RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
         }
@@ -115,12 +114,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
-            mAccountName =  acct.getDisplayName();
-            //Toast.makeText(mContext, "Server Auth Token --> " +acct.getServerAuthCode() , Toast.LENGTH_SHORT).show();
-            //Log.d(TAG,"Server Auth Token --> " +acct.getServerAuthCode());
-            //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
-            //updateUI(true);
-            new GetToken(this,acct.getAccount(),URL_SHORTNER_SCOPE,this).execute();
+            if (acct != null) {
+                mAccountName =  acct.getDisplayName();
+            }
+
+            new GetToken(this,acct.getAccount(),Constants.URL_SHORTNER_SCOPE,this).execute();
         } else {
             // Signed out, show unauthenticated UI.
             //updateUI(false);
@@ -130,33 +128,24 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private void updateUI(boolean loginSuccess) {
         if(loginSuccess)
         {
-            setLoginSession();
+            Utils.setLoginSession(mContext,mAccountName);
             startActivity(new Intent(mContext,MainActivity.class));
         }
         else
         {
-            clearLoginSuccess();
+            Utils.clearLoginSuccess(mContext);
         }
     }
 
-    public void setLoginSession()
-    {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(PREF_FILE,mContext.MODE_PRIVATE);
-        sharedPreferences.edit().putString(ACCOUNT_NAME,mAccountName).apply();
-        sharedPreferences.edit().putBoolean(IS_LOGGED_IN,true).apply();
-    }
 
-    public void clearLoginSuccess()
-    {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(PREF_FILE,mContext.MODE_PRIVATE);
-        sharedPreferences.edit().putBoolean(IS_LOGGED_IN,false).apply();
-    }
+
+
 
     @Override
     public void processFinish(String output) {
 
-        final Account account = new Account(mAccountName, "in.jatindhankhar.shorl");
-        if (getIntent().getBooleanExtra(ARG_IS_ADDING_NEW_ACCOUNT, false)) {
+        final Account account = new Account(mAccountName, Constants.PACKAGE_NAME);
+        if (getIntent().getBooleanExtra(Constants.ARG_IS_ADDING_NEW_ACCOUNT, false)) {
 
             String authtokenType = mAuthTokenType;
             mAccountManager.addAccountExplicitly(account, "", null);
@@ -165,11 +154,20 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             // Just reset the token
             mAccountManager.setAuthToken(account,mAuthTokenType,output);
         }
-        setLoginSession();
+        Utils.setLoginSession(mContext,mAccountName);
         startActivity(new Intent(this,MainActivity.class));
 
 
 
 
     }
+
+    private void chooseAccount() {
+        // use https://github.com/frakbot/Android-AccountChooser for
+        // compatibility with older devices
+        Intent intent = AccountManager.newChooseAccountIntent(null, null,
+                new String[] { "com.google" }, false, null, null, null, null);
+        startActivityForResult(intent, ACCOUNT_CODE);
+    }
+
 }

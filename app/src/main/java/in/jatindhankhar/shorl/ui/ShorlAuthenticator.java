@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Config;
 
+import in.jatindhankhar.shorl.utils.Constants;
+
 /**
  * Created by jatin on 12/21/16.
  * Big thanks to http://blog.udinic.com/2013/04/24/write-your-own-android-authenticator/
@@ -33,9 +35,9 @@ public class ShorlAuthenticator extends AbstractAccountAuthenticator {
     @Override
     public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType, String[] requiredFeatures, Bundle options) throws NetworkErrorException {
         final Intent intent = new Intent(mContext,LoginActivity.class);
-        intent.putExtra(LoginActivity.ARG_ACCOUNT_TYPE, accountType);
-        intent.putExtra(LoginActivity.ARG_AUTH_TYPE, authTokenType);
-        intent.putExtra(LoginActivity.ARG_IS_ADDING_NEW_ACCOUNT, true);
+        intent.putExtra(Constants.ARG_ACCOUNT_TYPE, accountType);
+        intent.putExtra(Constants.ARG_AUTH_TYPE, authTokenType);
+        intent.putExtra(Constants.ARG_IS_ADDING_NEW_ACCOUNT, true);
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
         final  Bundle bundle = new Bundle();
         bundle.putParcelable(AccountManager.KEY_INTENT,intent);
@@ -67,8 +69,8 @@ public class ShorlAuthenticator extends AbstractAccountAuthenticator {
         // an intent to display our AuthenticatorActivity.
         final Intent intent = new Intent(mContext, LoginActivity.class);
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
-        intent.putExtra(LoginActivity.ARG_ACCOUNT_TYPE, account.type);
-        intent.putExtra(LoginActivity.ARG_AUTH_TYPE, authTokenType);
+        intent.putExtra(Constants.ARG_ACCOUNT_TYPE, account.type);
+        intent.putExtra(Constants.ARG_AUTH_TYPE, authTokenType);
         final Bundle bundle = new Bundle();
         bundle.putParcelable(AccountManager.KEY_INTENT, intent);
         return bundle;
