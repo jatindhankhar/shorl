@@ -16,6 +16,7 @@ public final  class Constants {
     public final static String ARG_AUTH_TYPE = "AUTH_TYPE";
     public final static String ARG_ACCOUNT_NAME = "ACCOUNT_NAME";
     public final static String ARG_IS_ADDING_NEW_ACCOUNT = "IS_ADDING_ACCOUNT";
+    public final static String AUTH_TOKEN = "AUTH_TOKEN";
     public final static String URL_API = "https://www.googleapis.com/auth/urlshortener";
     public final static int RC_SIGN_IN = 9001;
     public final static String PACKAGE_NAME = BuildConfig.APPLICATION_ID;
