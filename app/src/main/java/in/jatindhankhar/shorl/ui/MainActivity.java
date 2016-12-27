@@ -64,12 +64,16 @@ public class MainActivity extends AppCompatActivity {
         {
             startActivity(new Intent(this,LoginActivity.class));
         }
-
-        GooglClient googlClient = ServiceGenerator.createService(GooglClient.class,Utils.getAuthToken(mContext));
+        ServiceGenerator serviceGenerator = new ServiceGenerator(mContext);
+        GooglClient googlClient = serviceGenerator.createService(GooglClient.class,Utils.getAuthToken(mContext));
         googlClient.displayUser().enqueue(new Callback<List<HistoryItem>>() {
             @Override
             public void onResponse(Call<List<HistoryItem>> call, Response<List<HistoryItem>> response) {
                 Log.d(TAG,"So response is " + response.isSuccessful() + "");
+                for(HistoryItem historyitem : response.body())
+                {
+                    Log.d(TAG,"Each item is " + historyitem.toString());
+                }
 
             }
 

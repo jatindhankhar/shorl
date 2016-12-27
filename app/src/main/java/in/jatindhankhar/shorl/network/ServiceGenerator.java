@@ -1,11 +1,13 @@
 package in.jatindhankhar.shorl.network;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.facebook.stetho.okhttp.StethoInterceptor;
 
 import java.io.IOException;
 
+import okhttp3.Authenticator;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -19,8 +21,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class ServiceGenerator {
-
-
+    private static Context mContext;
+    public ServiceGenerator(Context mContext)
+    {
+        this.mContext = mContext;
+    }
     public static final String API_BASE_URL = "https://www.googleapis.com/urlshortener/v1/url/";
 
 
@@ -49,6 +54,8 @@ public class ServiceGenerator {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         httpClient.addInterceptor(interceptor);
+        httpClient.authenticator(new TestAuthenticator(mContext));
+
 
         Retrofit retrofit = builder.client(httpClient.build()).build();
         return retrofit.create(serviceClass);
