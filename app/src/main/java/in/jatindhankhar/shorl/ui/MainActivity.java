@@ -1,10 +1,19 @@
 package in.jatindhankhar.shorl.ui;
 
+import android.Manifest;
+import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.accounts.AccountManagerCallback;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -12,15 +21,27 @@ import android.widget.Toast;
 import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.SignInButton;
 
+import java.io.IOException;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import in.jatindhankhar.shorl.R;
+import in.jatindhankhar.shorl.model.HistoryItem;
+import in.jatindhankhar.shorl.network.GooglClient;
+import in.jatindhankhar.shorl.network.ServiceGenerator;
+import in.jatindhankhar.shorl.utils.Constants;
+import in.jatindhankhar.shorl.utils.Utils;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int ACCOUNT_CODE = 1601;
+    private static final String TAG = MainActivity.class.getSimpleName();
+
 
     private AccountManager mAccountManager;
     private Context mContext;
@@ -36,30 +57,26 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        //TODO Add check if loggged in , if not open up LoginActivity again
+
         mContext = getApplicationContext();
-        // String accountName =
-        //String accountName =
-        //mAccountManager = AccountManager.get(mContext).peekAuthToken()
-        //chooseAccount();
+        // If not logged in ask user to Login
+        if(!Utils.isLoggedIn(mContext))
+        {
+            startActivity(new Intent(this,LoginActivity.class));
+        }
 
+        GooglClient googlClient = ServiceGenerator.createService(GooglClient.class,Utils.getAuthToken(mContext));
+        googlClient.displayUser().enqueue(new Callback<List<HistoryItem>>() {
+            @Override
+            public void onResponse(Call<List<HistoryItem>> call, Response<List<HistoryItem>> response) {
+                Log.d(TAG,"So response is " + response.isSuccessful() + "");
 
-    }
+            }
 
-    private void chooseAccount() {
-        // use https://github.com/frakbot/Android-AccountChooser for
-        // compatibility with older devices
-        Intent intent = AccountPicker.newChooseAccountIntent(null, null,
-                new String[] {"com.google", "com.google.android.legacyimap"},
-                false, null, null, null, null);
-        startActivityForResult(intent,23);
-    }
-
-
-    @OnClick(R.id.sign_in_button)
-    public void onClick() {
-        Toast.makeText(mContext, "Clicked", Toast.LENGTH_SHORT).show();
-        chooseAccount();
+            @Override
+            public void onFailure(Call<List<HistoryItem>> call, Throwable t) {
+                Toast.makeText(mContext, "So we failed to connect", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
-

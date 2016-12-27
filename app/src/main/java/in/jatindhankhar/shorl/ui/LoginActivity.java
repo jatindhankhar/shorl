@@ -49,6 +49,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private AccountManager mAccountManager;
     private String mAuthTokenType;
     public String mAccountName;
+    public String mAccountEmail;
 
 
     @Override
@@ -74,7 +75,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         mAccountManager = AccountManager.get(mContext);
         String accountName = getIntent().getStringExtra(Constants.ARG_ACCOUNT_NAME);
         mAuthTokenType = getIntent().getStringExtra(Constants.ARG_AUTH_TYPE);
-        chooseAccount();
         if (mAuthTokenType == null)
              mAuthTokenType ="Full access";
         signInButton.setSize(SignInButton.SIZE_WIDE);
@@ -116,6 +116,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             GoogleSignInAccount acct = result.getSignInAccount();
             if (acct != null) {
                 mAccountName =  acct.getDisplayName();
+                mAccountEmail = acct.getEmail();
             }
 
             new GetToken(this,acct.getAccount(),Constants.URL_SHORTNER_SCOPE,this).execute();
@@ -128,7 +129,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private void updateUI(boolean loginSuccess) {
         if(loginSuccess)
         {
-            Utils.setLoginSession(mContext,mAccountName);
+            Utils.setLoginSession(mContext,mAccountName,mAccountEmail);
             startActivity(new Intent(mContext,MainActivity.class));
         }
         else
@@ -154,20 +155,14 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             // Just reset the token
             mAccountManager.setAuthToken(account,mAuthTokenType,output);
         }
-        Utils.setLoginSession(mContext,mAccountName);
+        Utils.setLoginSession(mContext,mAccountName,mAccountEmail);
+        Log.d(TAG,"Login Successful, setting the token" + output);
+        Utils.setAuthToken(mContext,output);
+        Log.d(TAG,"Saved token is " + Utils.getAuthToken(mContext));
         startActivity(new Intent(this,MainActivity.class));
 
-
-
-
     }
 
-    private void chooseAccount() {
-        // use https://github.com/frakbot/Android-AccountChooser for
-        // compatibility with older devices
-        Intent intent = AccountManager.newChooseAccountIntent(null, null,
-                new String[] { "com.google" }, false, null, null, null, null);
-        startActivityForResult(intent, ACCOUNT_CODE);
-    }
+
 
 }
