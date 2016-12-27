@@ -12,34 +12,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.AccountPicker;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Scope;
-import com.squareup.okhttp.Authenticator;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-
 import java.io.IOException;
-import java.net.Proxy;
 
 import in.jatindhankhar.shorl.ui.LoginActivity;
-import in.jatindhankhar.shorl.ui.MainActivity;
 import in.jatindhankhar.shorl.utils.Constants;
 import in.jatindhankhar.shorl.utils.Utils;
-
-import static android.support.v4.app.ActivityCompat.startActivityForResult;
+import okhttp3.Authenticator;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.Route;
 
 /**
- * Created by jatin on 12/23/16.
+ * Created by jatin on 12/27/16.
  */
 
 public class TokenAuthenticator implements Authenticator {
@@ -48,13 +36,13 @@ public class TokenAuthenticator implements Authenticator {
     private AccountManager mAccountManager;
     private static String TAG = TokenAuthenticator.class.getSimpleName();
 
-    public TokenAuthenticator(Context context) {
+    public TokenAuthenticator(Context context)
+    {
         this.mContext = context;
         mAccountManager = AccountManager.get(mContext);
     }
-
     @Override
-    public Request authenticate(Proxy proxy, Response response) throws IOException {
+    public Request authenticate(Route route, Response response) throws IOException {
         Log.d(TAG,"Re-authenticating requests");
         if (Utils.isLoggedIn(mContext) && !Utils.getLoginEmail(mContext).isEmpty()) // If logged in and email not empty
         {
@@ -107,11 +95,6 @@ public class TokenAuthenticator implements Authenticator {
         return null;
     }
 
-    @Override
-    public Request authenticateProxy(Proxy proxy, Response response) throws IOException {
-        // Null indicates no attempt to authenticate.
-        return null;
-    }
 
 
     private class OnTokenAcquired implements AccountManagerCallback<Bundle> {
@@ -143,4 +126,4 @@ public class TokenAuthenticator implements Authenticator {
             }
         }
     }
-}
+    }

@@ -3,11 +3,8 @@ package in.jatindhankhar.shorl.network;
 import android.content.Context;
 import android.util.Log;
 
-import com.facebook.stetho.okhttp.StethoInterceptor;
-
 import java.io.IOException;
 
-import okhttp3.Authenticator;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -54,7 +51,7 @@ public class ServiceGenerator {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         httpClient.addInterceptor(interceptor);
-        httpClient.authenticator(new TestAuthenticator(mContext));
+        httpClient.authenticator(new TokenAuthenticator(mContext));
 
 
         Retrofit retrofit = builder.client(httpClient.build()).build();
