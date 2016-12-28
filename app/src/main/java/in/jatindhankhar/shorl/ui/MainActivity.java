@@ -7,6 +7,7 @@ import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -58,13 +59,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mContext = getApplicationContext();
+        mContext = this;
         // If not logged in ask user to Login
         if(!Utils.isLoggedIn(mContext))
         {
             startActivity(new Intent(this,LoginActivity.class));
         }
-        ServiceGenerator serviceGenerator = new ServiceGenerator(mContext);
+        ServiceGenerator serviceGenerator = new ServiceGenerator(MainActivity.this);
         GooglClient googlClient = serviceGenerator.createService(GooglClient.class,Utils.getAuthToken(mContext));
         googlClient.displayUser().enqueue(new Callback<List<HistoryItem>>() {
             @Override

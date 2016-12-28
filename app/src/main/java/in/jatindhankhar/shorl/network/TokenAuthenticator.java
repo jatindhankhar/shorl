@@ -56,7 +56,7 @@ public class TokenAuthenticator implements Authenticator {
                 // for ActivityCompat#requestPermissions for more details.
                 return null;
             }
-            Log.d(TAG," Old Auth Token : " + Utils.getAuthToken(mContext));
+            //Log.d(TAG," Old Auth Token : " + Utils.getAuthToken(mContext));
             String email = Utils.getLoginEmail(mContext);
             Account targetAccount = null;
             for (Account account : mAccountManager.getAccountsByType("com.google"))
@@ -70,13 +70,13 @@ public class TokenAuthenticator implements Authenticator {
 
             if(targetAccount == null)
             {
-                Toast.makeText(mContext, "Account Manager is null", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(mContext, "Account Manager is null", Toast.LENGTH_SHORT).show();
             }
             else {
-                Toast.makeText(mContext, "Account Manager not null " + targetAccount.name, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(mContext, "Account Manager not null " + targetAccount.name, Toast.LENGTH_SHORT).show();
                 mAccountManager.getAuthToken(targetAccount,  Constants.URL_SHORTNER_SCOPE, null, (Activity) mContext,
                         new OnTokenAcquired(), null);
-                Log.d(TAG," Old Auth Token : " + Utils.getAuthToken(mContext));
+                //Log.d(TAG," Old Auth Token : " + Utils.getAuthToken(mContext));
 
                 // Add new header to rejected request and retry it
                 return response.request().newBuilder()
@@ -112,10 +112,10 @@ public class TokenAuthenticator implements Authenticator {
                 else
                 {
                     String token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
-                    Log.d(TAG,"New token is " + token);
+                    //Log.d(TAG,"New token is " + token);
                     Utils.setAuthToken(mContext,token);
-                    Log.d(TAG,"Stored token is " +Utils.getAuthToken(mContext));
-                    Log.d(TAG,"New email is "+ Utils.getLoginEmail(mContext));
+                    //Log.d(TAG,"Stored token is " +Utils.getAuthToken(mContext));
+                    //Log.d(TAG,"New email is "+ Utils.getLoginEmail(mContext));
                 }
             } catch (OperationCanceledException e) {
                 e.printStackTrace();
