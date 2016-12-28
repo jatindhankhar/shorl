@@ -1,5 +1,6 @@
 package in.jatindhankhar.shorl.model;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -16,9 +17,11 @@ public class HistoryItem {
     @SerializedName("longUrl")
     
     private String longUrl;
+    @Expose
     @SerializedName("status")
     
     private String status;
+    @Expose
     @SerializedName("created")
     
     private String created;
