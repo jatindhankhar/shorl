@@ -80,7 +80,7 @@ public class TokenAuthenticator implements Authenticator {
 
                 // Add new header to rejected request and retry it
                 return response.request().newBuilder()
-                        .addHeader("Authorization","Bearer " + Utils.getAuthToken(mContext) )
+                        .header("Authorization","Bearer " + Utils.getAuthToken(mContext) )
                         .build();
 
             }
@@ -116,6 +116,7 @@ public class TokenAuthenticator implements Authenticator {
                     Utils.setAuthToken(mContext,token);
                     //Log.d(TAG,"Stored token is " +Utils.getAuthToken(mContext));
                     //Log.d(TAG,"New email is "+ Utils.getLoginEmail(mContext));
+                    Log.d(TAG,"Re-authentication successful");
                 }
             } catch (OperationCanceledException e) {
                 e.printStackTrace();
