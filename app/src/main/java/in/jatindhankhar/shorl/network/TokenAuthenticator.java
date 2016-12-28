@@ -44,6 +44,9 @@ public class TokenAuthenticator implements Authenticator {
     @Override
     public Request authenticate(Route route, Response response) throws IOException {
         Log.d(TAG,"Re-authenticating requests");
+        if (responseCount(response) >= 3) {
+            return null; // If we've failed 3 times, give up. - in real life, never give up!!
+        }
         if (Utils.isLoggedIn(mContext) && !Utils.getLoginEmail(mContext).isEmpty()) // If logged in and email not empty
         {
             if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
@@ -126,5 +129,14 @@ public class TokenAuthenticator implements Authenticator {
                 e.printStackTrace();
             }
         }
+    }
+
+    // Thanks http://stackoverflow.com/a/34819354/3455743
+    private int responseCount(Response response) {
+        int result = 1;
+        while ((response = response.priorResponse()) != null) {
+            result++;
+        }
+        return result;
     }
     }
