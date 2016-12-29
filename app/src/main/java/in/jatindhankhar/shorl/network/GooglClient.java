@@ -20,6 +20,6 @@ public interface GooglClient {
     @GET("history")
     Call<HistoryResponse> displayUser();
 
-    @POST(".") // Endpoint is same as base point
+    @POST("./") // Endpoint is same as base point
     Call<HistoryItem> createUrl(@Body NewUrl newUrl);
 }
