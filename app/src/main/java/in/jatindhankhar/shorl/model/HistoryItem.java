@@ -9,21 +9,21 @@ import com.google.gson.annotations.SerializedName;
 
 public class HistoryItem {
     @SerializedName("kind")
-    
+
     private String kind;
     @SerializedName("id")
-    
+
     private String id;
     @SerializedName("longUrl")
-    
+
     private String longUrl;
-    @Expose
+
     @SerializedName("status")
-    
+
     private String status;
-    @Expose
+
     @SerializedName("created")
-    
+
     private String created;
 
     public String getKind() {

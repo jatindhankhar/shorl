@@ -11,16 +11,16 @@ import java.util.List;
 public class HistoryResponse {
 
     @SerializedName("kind")
-    
+
     private String kind;
     @SerializedName("totalItems")
-    
+
     private Integer totalItems;
     @SerializedName("itemsPerPage")
-    
+
     private Integer itemsPerPage;
     @SerializedName("items")
-    
+
     private List<HistoryItem> historyItems = null;
 
     public String getKind() {
