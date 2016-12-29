@@ -30,6 +30,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import in.jatindhankhar.shorl.R;
 import in.jatindhankhar.shorl.model.HistoryItem;
+import in.jatindhankhar.shorl.model.HistoryResponse;
+import in.jatindhankhar.shorl.model.NewUrl;
 import in.jatindhankhar.shorl.network.GooglClient;
 import in.jatindhankhar.shorl.network.ServiceGenerator;
 import in.jatindhankhar.shorl.utils.Constants;
@@ -66,22 +68,47 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(this,LoginActivity.class));
         }
         ServiceGenerator serviceGenerator = new ServiceGenerator(MainActivity.this);
-        GooglClient googlClient = serviceGenerator.createService(GooglClient.class,Utils.getAuthToken(mContext));
-        googlClient.displayUser().enqueue(new Callback<List<HistoryItem>>() {
-            @Override
-            public void onResponse(Call<List<HistoryItem>> call, Response<List<HistoryItem>> response) {
-                Log.d(TAG,"So response is " + response.isSuccessful() + "");
-                for(HistoryItem historyitem : response.body())
-                {
-                    Log.d(TAG,"Each item is " + historyitem.toString());
-                }
 
+
+        GooglClient googlClient = ServiceGenerator.createService(GooglClient.class,Utils.getAuthToken(mContext));
+
+
+
+        Log.d(TAG,"We are creating a new url now ");
+        NewUrl newUrl = new NewUrl();
+        newUrl.setLongUrl("https://reddit.com/r/programming");
+        googlClient.createUrl(newUrl).enqueue(new Callback<HistoryItem>() {
+            @Override
+            public void onResponse(Call<HistoryItem> call, Response<HistoryItem> response) {
+                HistoryItem historyItem = response.body();
+               // Log.d(TAG,"HistoryItem id is " + historyItem.getId());
             }
 
             @Override
-            public void onFailure(Call<List<HistoryItem>> call, Throwable t) {
-                Toast.makeText(mContext, "So we failed to connect", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<HistoryItem> call, Throwable t) {
+
+            }
+        });
+
+
+        googlClient.displayUser().enqueue(new Callback<HistoryResponse>() {
+            @Override
+            public void onResponse(Call<HistoryResponse> call, Response<HistoryResponse> response) {
+                if(response.isSuccessful())
+                {
+                List<HistoryItem> historyItems = response.body().getHistoryItems();
+                for(HistoryItem historyItem : historyItems) {
+                    Log.d(TAG," Url is " + historyItem.getId());
+                }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<HistoryResponse> call, Throwable t) {
+
             }
         });
     }
-}
+    }
+
