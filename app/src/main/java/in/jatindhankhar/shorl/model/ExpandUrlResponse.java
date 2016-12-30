@@ -7,20 +7,22 @@ import com.google.gson.annotations.SerializedName;
  * Created by jatin on 12/29/16.
  */
 
-public class ExpandUrlResponse {
-    private HistoryItem historyItem;
+public class ExpandUrlResponse  extends  HistoryItem{
+
+
 
     @SerializedName("analytics")
     private Analytics analytics;
 
 
-    public HistoryItem getHistoryItem() {
-        return historyItem;
-    }
+    /*public HistoryItem getHistoryItem() {
+        //return super
+        return super.getClass().cast(HistoryItem);
+    }*/
 
-    public void setHistoryItem(HistoryItem historyItem) {
+/*    public void setHistoryItem(HistoryItem historyItem) {
         this.historyItem = historyItem;
-    }
+    } */
 
     public Analytics getAnalytics() {
         return analytics;
