@@ -29,6 +29,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import in.jatindhankhar.shorl.R;
+import in.jatindhankhar.shorl.model.Analytics;
+import in.jatindhankhar.shorl.model.CountData;
+import in.jatindhankhar.shorl.model.DetailedHistoryResponse;
+import in.jatindhankhar.shorl.model.ExpandUrlResponse;
 import in.jatindhankhar.shorl.model.HistoryItem;
 import in.jatindhankhar.shorl.model.HistoryResponse;
 import in.jatindhankhar.shorl.model.NewUrl;
@@ -77,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG,"We are creating a new url now ");
         NewUrl newUrl = new NewUrl();
         newUrl.setLongUrl("https://reddit.com/r/programming");
-        googlClient.createUrl(newUrl).enqueue(new Callback<HistoryItem>() {
+      /*  googlClient.createUrl(newUrl).enqueue(new Callback<HistoryItem>() {
             @Override
             public void onResponse(Call<HistoryItem> call, Response<HistoryItem> response) {
                 HistoryItem historyItem = response.body();
@@ -88,10 +92,10 @@ public class MainActivity extends AppCompatActivity {
             public void onFailure(Call<HistoryItem> call, Throwable t) {
 
             }
-        });
+        }); */
 
 
-        googlClient.displayUser().enqueue(new Callback<HistoryResponse>() {
+        /* googlClient.processList().enqueue(new Callback<HistoryResponse>() {
             @Override
             public void onResponse(Call<HistoryResponse> call, Response<HistoryResponse> response) {
                 if(response.isSuccessful())
@@ -108,7 +112,51 @@ public class MainActivity extends AppCompatActivity {
             public void onFailure(Call<HistoryResponse> call, Throwable t) {
 
             }
+        }); */
+
+        googlClient.processDetaiList("FULL").enqueue(new Callback<DetailedHistoryResponse>() {
+            @Override
+            public void onResponse(Call<DetailedHistoryResponse> call, Response<DetailedHistoryResponse> response) {
+                if(response.isSuccessful())
+                {
+                    Log.d(TAG,"Successful");
+                    List<ExpandUrlResponse> r = response.body().getHistoryItems();
+                    for(ExpandUrlResponse expandUrlResponse  : r) {
+                        if(expandUrlResponse != null)
+                        Log.d(TAG," Url is " + expandUrlResponse.getId());
+                        else
+                            Log.d(TAG," Object is null :|");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DetailedHistoryResponse> call, Throwable t) {
+
+            }
         });
+
+        /* googlClient.processAnalytics("http://goo.gl/fbsS","FULL").enqueue(new Callback<ExpandUrlResponse>() {
+            @Override
+            public void onResponse(Call<ExpandUrlResponse> call, Response<ExpandUrlResponse> response) {
+                if(response.isSuccessful())
+                {
+                    Log.d(TAG,"Successful");
+                     Analytics analytics = response.body().getAnalytics();
+                    List<CountData> r = analytics.getAllTime().getBrowsers();
+                    for(CountData cd : r)
+                    {
+                        Log.d(TAG, "Id is " + cd.getId());
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ExpandUrlResponse> call, Throwable t) {
+
+            }
+        }); */
     }
     }
 
