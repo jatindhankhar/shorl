@@ -15,15 +15,6 @@ public class ExpandUrlResponse  extends  HistoryItem{
     private Analytics analytics;
 
 
-    /*public HistoryItem getHistoryItem() {
-        //return super
-        return super.getClass().cast(HistoryItem);
-    }*/
-
-/*    public void setHistoryItem(HistoryItem historyItem) {
-        this.historyItem = historyItem;
-    } */
-
     public Analytics getAnalytics() {
         return analytics;
     }

@@ -52,6 +52,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        ButterKnife.setDebug(true);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         mContext = getApplicationContext();
@@ -73,6 +74,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         mAuthTokenType = getIntent().getStringExtra(Constants.ARG_AUTH_TYPE);
         if (mAuthTokenType == null)
              mAuthTokenType ="Full access";
+        //if(signInButton != null)
+        signInButton = (SignInButton) findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_WIDE);
 
     }
@@ -90,7 +93,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
 
     @OnClick(R.id.sign_in_button)
-    public void signIn() {
+    public void onClick() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, Constants.RC_SIGN_IN);
     }

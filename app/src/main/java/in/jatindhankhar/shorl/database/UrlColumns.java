@@ -4,6 +4,7 @@ import net.simonvt.schematic.annotation.AutoIncrement;
 import net.simonvt.schematic.annotation.DataType;
 import net.simonvt.schematic.annotation.NotNull;
 import net.simonvt.schematic.annotation.PrimaryKey;
+import net.simonvt.schematic.annotation.Unique;
 
 import in.jatindhankhar.shorl.utils.Constants;
 
@@ -12,8 +13,8 @@ import in.jatindhankhar.shorl.utils.Constants;
  */
 
 public interface UrlColumns {
-    @DataType(DataType.Type.INTEGER) @PrimaryKey @AutoIncrement
-      String _ID = Constants.COLUMN_ID;
+    @DataType(DataType.Type.INTEGER) @PrimaryKey @AutoIncrement @NotNull
+    String _ID = Constants.COLUMN_ID;
     @DataType(DataType.Type.TEXT) @NotNull
      String SHORT_URL = Constants.COLUMN_SHORT_URL;
     @DataType(DataType.Type.TEXT) @NotNull

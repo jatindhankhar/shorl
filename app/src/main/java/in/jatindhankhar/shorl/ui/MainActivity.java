@@ -8,9 +8,12 @@ import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +32,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import in.jatindhankhar.shorl.R;
+import in.jatindhankhar.shorl.database.UrlProvider;
 import in.jatindhankhar.shorl.model.Analytics;
 import in.jatindhankhar.shorl.model.CountData;
 import in.jatindhankhar.shorl.model.DetailedHistoryResponse;
@@ -157,6 +161,24 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }); */
+
+        Cursor cursor = mContext.getContentResolver().query(UrlProvider.Urls.CONTENT_URI,null,null,null,null);
+        if (cursor.getCount() == 0)
+        {
+            Log.d(TAG,"Empty cursors");
+        }
+        else
+        {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(Constants.COLUMN_KIND_URL,"yo");
+            contentValues.put(Constants.COLUMN_SHORT_URL,"me");
+            contentValues.put(Constants.COLUMN_LONG_URL,"why");
+            contentValues.put(Constants.COLUMN_CREATED_DATE_URL,"nopw");
+            contentValues.put(Constants.COLUMN_ANALYTICS_URL,"hah");
+            contentValues.put(Constants.COLUMN_STATUS_URL,"23445");
+            Log.d(TAG," Insert new values");
+            Uri cursor1 = mContext.getContentResolver().insert(UrlProvider.Urls.CONTENT_URI, contentValues);
+        }
     }
     }
 

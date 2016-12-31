@@ -20,7 +20,7 @@ public final class UrlProvider {
         @ContentUri(
                 path = Constants.TABLE_NAME,
                 type = "vnd.android.cursor.dir/urls",
-                defaultSort = UrlColumns.CREATED_URL + "DESC")
-        public static final Uri URLS = Uri.parse("content://" + AUTHORITY + "/urls");
+                defaultSort = UrlColumns.CREATED_URL + " DESC")
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/urls");
     }
 }
