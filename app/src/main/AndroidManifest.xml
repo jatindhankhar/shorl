@@ -10,6 +10,8 @@
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
 
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
 
     <application
         android:allowBackup="true"
@@ -34,14 +36,30 @@
         <activity
             android:name=".ui.LoginActivity"
             android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <service android:name=".service.ShorlAuthenticatorService" android:process=":auth">
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <service android:name=".service.ShorlAuthenticatorService" android:process=":auth"
+            >
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
             <meta-data android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
+        <service
+            android:name=".service.SyncService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+        <provider
+            android:name=".database.generated.UrlProvider"
+            android:authorities="in.jatindhankhar.shorl.database.UrlProvider"
+            android:exported="false" />
     </application>
+
 
 </manifest>

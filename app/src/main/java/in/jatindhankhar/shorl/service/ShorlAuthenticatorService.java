@@ -12,11 +12,19 @@ import in.jatindhankhar.shorl.ui.ShorlAuthenticator;
  */
 
 public class ShorlAuthenticatorService extends Service {
+
+    private ShorlAuthenticator mAuthenticator;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mAuthenticator = new ShorlAuthenticator(this);
+    }
+
     @Nullable
 
     @Override
     public IBinder onBind(Intent intent) {
-        ShorlAuthenticator shorlAuthenticator = new ShorlAuthenticator(this);
-        return  shorlAuthenticator.getIBinder();
+        return  mAuthenticator.getIBinder();
     }
 }

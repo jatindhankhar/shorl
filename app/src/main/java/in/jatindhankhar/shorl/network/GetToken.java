@@ -11,7 +11,7 @@ import com.google.android.gms.auth.UserRecoverableAuthException;
 
 import java.io.IOException;
 
-import in.jatindhankhar.shorl.model.AsyncResponse;
+import in.jatindhankhar.shorl.utils.AsyncResponse;
 
 /**
  * Created by jatin on 12/12/16.
