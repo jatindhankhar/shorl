@@ -1,24 +1,13 @@
 package in.jatindhankhar.shorl.network;
 
-import android.Manifest;
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
-import android.widget.Toast;
+
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
 
 import java.io.IOException;
 
-import in.jatindhankhar.shorl.ui.LoginActivity;
 import in.jatindhankhar.shorl.utils.Constants;
 import in.jatindhankhar.shorl.utils.Utils;
 import okhttp3.Authenticator;
@@ -31,15 +20,13 @@ import okhttp3.Route;
  */
 
 public class TokenAuthenticator implements Authenticator {
-    private static final  int AUTHORIZATION_CODE = 1998;
+
     private Context mContext;
-    private AccountManager mAccountManager;
     private static String TAG = TokenAuthenticator.class.getSimpleName();
 
     public TokenAuthenticator(Context context)
     {
         this.mContext = context;
-        mAccountManager = AccountManager.get(mContext);
     }
     @Override
     public Request authenticate(Route route, Response response) throws IOException {
@@ -47,90 +34,27 @@ public class TokenAuthenticator implements Authenticator {
         if (responseCount(response) >= 3) {
             return null; // If we've failed 3 times, give up. - in real life, never give up!!
         }
-        if (Utils.isLoggedIn(mContext) && !Utils.getLoginEmail(mContext).isEmpty()) // If logged in and email not empty
+        else
         {
-            if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return null;
-            }
-            //Log.d(TAG," Old Auth Token : " + Utils.getAuthToken(mContext));
-            String email = Utils.getLoginEmail(mContext);
-            Account targetAccount = null;
-            for (Account account : mAccountManager.getAccountsByType("com.google"))
-            {
-                if(account.name.equals(email))
-                {
-                    targetAccount = account;
-                    break;
-                }
-            }
-
-            if(targetAccount == null)
-            {
-                //Toast.makeText(mContext, "Account Manager is null", Toast.LENGTH_SHORT).show();
-            }
-            else {
-                //Toast.makeText(mContext, "Account Manager not null " + targetAccount.name, Toast.LENGTH_SHORT).show();
-                mAccountManager.getAuthToken(targetAccount,  Constants.URL_SHORTNER_SCOPE, null, (Activity) mContext,
-                        new OnTokenAcquired(), null);
-                //Log.d(TAG," Old Auth Token : " + Utils.getAuthToken(mContext));
-
-                // Add new header to rejected request and retry it
+            try {
+                String token = GoogleAuthUtil.getToken(mContext, Utils.getLoginEmail(mContext), Constants.URL_SHORTNER_SCOPE);
+                Log.d(TAG,"New token is " + token);
+                Utils.setAuthToken(mContext,token);
                 return response.request().newBuilder()
                         .header("Authorization","Bearer " + Utils.getAuthToken(mContext) )
                         .build();
-
+            } catch (GoogleAuthException e) {
+                e.printStackTrace();
+                return null;
             }
-        }
-        else
-        {
-            // Start Login Activity
-            ((Activity)mContext).startActivity(new Intent(mContext,LoginActivity.class));
-            return null;
+
         }
 
-        return null;
+
     }
 
 
 
-    private class OnTokenAcquired implements AccountManagerCallback<Bundle> {
-        @Override
-        public void run(AccountManagerFuture<Bundle> future) {
-            try {
-                Bundle bundle = future.getResult();
-                Intent launch = (Intent) bundle.get(AccountManager.KEY_INTENT);
-                if (launch != null)
-                {
-
-                    ((Activity)mContext).startActivityForResult(launch,AUTHORIZATION_CODE);
-
-                }
-                else
-                {
-                    String token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
-                    //Log.d(TAG,"New token is " + token);
-                    Utils.setAuthToken(mContext,token);
-                    //Log.d(TAG,"Stored token is " +Utils.getAuthToken(mContext));
-                    //Log.d(TAG,"New email is "+ Utils.getLoginEmail(mContext));
-                    Log.d(TAG,"Re-authentication successful");
-                    
-                }
-            } catch (OperationCanceledException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (AuthenticatorException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     // Thanks http://stackoverflow.com/a/34819354/3455743
     private int responseCount(Response response) {
