@@ -51,7 +51,7 @@ public class ServiceGenerator {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         httpClient.addInterceptor(interceptor);
-        httpClient.authenticator(new TokenAuthenticator(mContext));
+        httpClient.authenticator(new AlternateTokenAuthenticator(mContext));
 
 
         Retrofit retrofit = builder.client(httpClient.build()).build();
