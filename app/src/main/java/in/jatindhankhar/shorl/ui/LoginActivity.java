@@ -116,6 +116,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             if (acct != null) {
                 mAccountName =  acct.getDisplayName();
                 mAccountEmail = acct.getEmail();
+                //acct.toString();
             }
 
             new GetToken(this,acct.getAccount(),Constants.URL_SHORTNER_SCOPE,this).execute();

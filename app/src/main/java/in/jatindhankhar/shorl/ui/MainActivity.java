@@ -3,11 +3,6 @@ package in.jatindhankhar.shorl.ui;
 import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -16,30 +11,25 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.common.AccountPicker;
-import com.google.android.gms.common.SignInButton;
+
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import in.jatindhankhar.shorl.R;
 import in.jatindhankhar.shorl.database.UrlProvider;
-import in.jatindhankhar.shorl.model.Analytics;
-import in.jatindhankhar.shorl.model.CountData;
 import in.jatindhankhar.shorl.model.DetailedHistoryResponse;
 import in.jatindhankhar.shorl.model.ExpandUrlResponse;
-import in.jatindhankhar.shorl.model.HistoryItem;
-import in.jatindhankhar.shorl.model.HistoryResponse;
 import in.jatindhankhar.shorl.model.NewUrl;
 import in.jatindhankhar.shorl.network.GooglClient;
 import in.jatindhankhar.shorl.network.ServiceGenerator;
@@ -53,16 +43,15 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    @BindView(R.id.recyclerview)
+    RecyclerView recyclerview;
+    @BindView(R.id.activity_main)
+    CoordinatorLayout coordinatorLayout;
 
 
     private AccountManager mAccountManager;
     private Context mContext;
-    @BindView(R.id.sign_in_button)
-    SignInButton signInButton;
-    @BindView(R.id.activity_main)
-    RelativeLayout activityMain;
-    @BindView(R.id.hello_text)
-    TextView helloText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +65,10 @@ public class MainActivity extends AppCompatActivity {
         }
         ServiceGenerator serviceGenerator = new ServiceGenerator(MainActivity.this);
 
+        recyclerview.setHasFixedSize(true);
+        recyclerview.setLayoutManager(new LinearLayoutManager(this));
 
+        recyclerview.setAdapter(new ListAdapter());
         GooglClient googlClient = ServiceGenerator.createService(GooglClient.class, Utils.getAuthToken(mContext));
 
 
@@ -132,13 +124,14 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
         }
-        Log.d(TAG,"Testing service");
-        Log.d(TAG,"Account is " + targetAccount.name);
+        Log.d(TAG, "Testing service");
+        Log.d(TAG, "Account is " + targetAccount.name);
         Bundle settingsBundle = new Bundle();
-        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL,true);
-        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED,true);
-        ContentResolver.requestSync(targetAccount,"in.jatindhankhar.shorl.database.UrlProvider",settingsBundle);
-        /*Log.d(TAG,"Sync requested");
+        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        ContentResolver.requestSync(targetAccount, "in.jatindhankhar.shorl.database.UrlProvider", settingsBundle);
+
+        /*Log.d(TAG,"Sync requested");*/
         googlClient.processDetaiList("FULL").enqueue(new Callback<DetailedHistoryResponse>() {
             @Override
             public void onResponse(Call<DetailedHistoryResponse> call, Response<DetailedHistoryResponse> response) {
@@ -158,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
             public void onFailure(Call<DetailedHistoryResponse> call, Throwable t) {
 
             }
-        }); */
+        });
 
         /* googlClient.processAnalytics("http://goo.gl/fbsS","FULL").enqueue(new Callback<ExpandUrlResponse>() {
             @Override
@@ -201,5 +194,5 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-    }
+}
 

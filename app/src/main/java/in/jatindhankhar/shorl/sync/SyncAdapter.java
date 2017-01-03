@@ -1,6 +1,7 @@
 package in.jatindhankhar.shorl.sync;
 
 import android.accounts.Account;
+import android.app.Activity;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
@@ -33,7 +34,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     public SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
-        serviceGenerator= new ServiceGenerator(context);
+        serviceGenerator= new ServiceGenerator(getContext().getApplicationContext());
         mAuthToken = Utils.getAuthToken(context);
     }
 
