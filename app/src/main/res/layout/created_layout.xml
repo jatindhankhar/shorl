@@ -19,6 +19,5 @@
         android:layout_gravity="center_vertical"
         android:layout_margin="5dp"
         android:text="29 December,2016"
-        android:textAppearance="@Subtitle"
         />
 </LinearLayout>
