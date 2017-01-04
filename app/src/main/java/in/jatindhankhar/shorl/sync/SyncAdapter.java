@@ -72,7 +72,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                             cv.put(Constants.COLUMN_ANALYTICS_URL,gson.toJson(expandUrlResponse.getAnalytics()));
                             cv.put(Constants.COLUMN_STATUS_URL, expandUrlResponse.getStatus());
                             contentValues.add(cv);
-                            cv.clear();
+                            //cv.clear();
                             Log.d(TAG, " Url is " + expandUrlResponse.getId());
 
                         }
@@ -86,8 +86,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                             Log.d(TAG,"Deleted " + res + " rows");
                         }
 
-                        int res = mContentResolver.bulkInsert(UrlProvider.Urls.CONTENT_URI, contentValues.toArray(new ContentValues[contentValues.size()]));
-                        Log.d(TAG,"Inserted " + res + " rows");
+                        if(contentValues.size() > 0) {
+                            int res = mContentResolver.bulkInsert(UrlProvider.Urls.CONTENT_URI, contentValues.toArray(new ContentValues[contentValues.size()]));f
+                            Log.d(TAG, "Inserted " + res + " rows");
+                        }
                     }
 
                 }
