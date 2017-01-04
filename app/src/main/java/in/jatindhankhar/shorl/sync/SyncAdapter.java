@@ -72,6 +72,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                             cv.put(Constants.COLUMN_ANALYTICS_URL,gson.toJson(expandUrlResponse.getAnalytics()));
                             cv.put(Constants.COLUMN_STATUS_URL, expandUrlResponse.getStatus());
                             contentValues.add(cv);
+                            cv.clear();
                             Log.d(TAG, " Url is " + expandUrlResponse.getId());
 
                         }
@@ -81,10 +82,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                         if ( count > 0 )
                         {
                             // If not empty clear all rows
-                            mContentResolver.delete(UrlProvider.Urls.CONTENT_URI, "1", null);
+                            int res = mContentResolver.delete(UrlProvider.Urls.CONTENT_URI, "1", null);
+                            Log.d(TAG,"Deleted " + res + " rows");
                         }
 
-                        mContentResolver.bulkInsert(UrlProvider.Urls.CONTENT_URI,contentValues.toArray(new ContentValues[contentValues.size()]));
+                        int res = mContentResolver.bulkInsert(UrlProvider.Urls.CONTENT_URI, contentValues.toArray(new ContentValues[contentValues.size()]));
+                        Log.d(TAG,"Inserted " + res + " rows");
                     }
 
                 }
@@ -92,7 +95,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
             @Override
             public void onFailure(Call<DetailedHistoryResponse> call, Throwable t) {
-
+                Log.d(TAG,"Failed to sync");
             }
         });
 

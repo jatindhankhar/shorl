@@ -4,6 +4,11 @@ import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.util.Log;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import in.jatindhankhar.shorl.ui.LoginActivity;
 
@@ -57,5 +62,18 @@ public final class Utils {
         return context.getSharedPreferences(Constants.PREF_FILE,context.MODE_PRIVATE).getString(Constants.AUTH_TOKEN,"");
     }
 
+    public static String getGooglShortUrl(@NonNull String shortUrl)
+    {
+        URL targetUrl= null;
+        try {
+            targetUrl = new URL(shortUrl);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
 
+        if(targetUrl == null)
+            return null;
+        else
+            return targetUrl.getHost() + targetUrl.getPath();
+    }
 }
