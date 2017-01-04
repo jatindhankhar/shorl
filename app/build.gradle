@@ -52,8 +52,7 @@ dependencies {
     // For Oauth
     //compile 'com.google.api-client:google-api-client:1.20.0'
 
-    //Spark
-    compile 'com.github.jd-alexander:LikeButton:0.2.0'
+    compile 'com.miguelcatalan:materialsearchview:1.4.0'
 
 
 
