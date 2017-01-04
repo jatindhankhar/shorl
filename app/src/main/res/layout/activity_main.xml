@@ -6,35 +6,51 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="in.jatindhankhar.shorl.ui.MainActivity">
-    <!-- <android.support.design.widget.AppBarLayout
+     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
--->
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:fitsSystemWindows="true"
+         >
+         <FrameLayout
+             android:id="@+id/toolbar_container"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             app:layout_behavior="@string/appbar_scrolling_view_behavior"
+             app:layout_scrollFlags="scroll|enterAlways"
+             >
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_scrollFlags="scroll|enterAlways"
+        />
 
-        <android.support.design.widget.TabLayout
+         <com.miguelcatalan.materialsearchview.MaterialSearchView
+             android:id="@+id/search_view"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+              />
+         </FrameLayout>
+    <!-- <android.support.design.widget.TabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:tabMode="fixed"
-            app:tabGravity="fill"/>
-   <!-- </android.support.design.widget.AppBarLayout> -->
-    <android.support.v4.view.ViewPager
+            app:tabGravity="fill"/> -->
+    </android.support.design.widget.AppBarLayout>
+     <!--<android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"  />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"  /> -->
 
     <android.support.v7.widget.RecyclerView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:id="@+id/recyclerview"
     />
 <android.support.design.widget.FloatingActionButton
@@ -43,6 +59,8 @@
     android:src="@drawable/add_white"
     app:fabSize="normal"
     android:layout_gravity="bottom|right|end"
+    app:layout_anchorGravity="bottom|end"
     android:layout_margin="12dp"
+    app:layout_behavior=".ui.custom.FABScrollBehavior"
     />
 </android.support.design.widget.CoordinatorLayout>
