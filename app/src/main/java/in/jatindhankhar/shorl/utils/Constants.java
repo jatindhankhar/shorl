@@ -29,6 +29,7 @@ public final  class Constants {
     public static final String COLUMN_STATUS_URL = "status";
     public static final String COLUMN_KIND_URL = "kind";
     public static final String COLUMN_ANALYTICS_URL = "analytics";
+    public static final String COLUMN_FAVOURITE = "favourite";
     public final static String DATABASE_NAME = "shorl";
-    public final static int DATABASE_VERSION = 1;
+    public final static int DATABASE_VERSION = 3;
 }

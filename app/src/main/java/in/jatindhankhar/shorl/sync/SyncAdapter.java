@@ -5,18 +5,26 @@ import android.app.Activity;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.util.ArrayList;
 import java.util.List;
 
+import in.jatindhankhar.shorl.database.UrlDatabase;
+import in.jatindhankhar.shorl.database.UrlProvider;
 import in.jatindhankhar.shorl.model.DetailedHistoryResponse;
 import in.jatindhankhar.shorl.model.ExpandUrlResponse;
 import in.jatindhankhar.shorl.network.GooglClient;
 import in.jatindhankhar.shorl.network.ServiceGenerator;
 import in.jatindhankhar.shorl.ui.MainActivity;
+import in.jatindhankhar.shorl.utils.Constants;
 import in.jatindhankhar.shorl.utils.Utils;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,6 +44,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         super(context, autoInitialize);
         serviceGenerator= new ServiceGenerator(getContext().getApplicationContext());
         mAuthToken = Utils.getAuthToken(context);
+        mContentResolver = context.getContentResolver();
+
     }
 
     @Override
@@ -48,13 +58,35 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             public void onResponse(Call<DetailedHistoryResponse> call, Response<DetailedHistoryResponse> response) {
                 if (response.isSuccessful()) {
                     Log.d(TAG, "Successful");
+                    ArrayList<ContentValues> contentValues = new ArrayList<ContentValues>();
+                    Gson gson = new GsonBuilder().create();
                     List<ExpandUrlResponse> r = response.body().getHistoryItems();
                     for (ExpandUrlResponse expandUrlResponse : r) {
-                        if (expandUrlResponse != null)
+
+                        {
+                            ContentValues cv = new ContentValues();
+                            cv.put(Constants.COLUMN_KIND_URL, expandUrlResponse.getKind());
+                            cv.put(Constants.COLUMN_SHORT_URL, expandUrlResponse.getId());
+                            cv.put(Constants.COLUMN_LONG_URL, expandUrlResponse.getLongUrl());
+                            cv.put(Constants.COLUMN_CREATED_DATE_URL, expandUrlResponse.getCreated());
+                            cv.put(Constants.COLUMN_ANALYTICS_URL,gson.toJson(expandUrlResponse.getAnalytics()));
+                            cv.put(Constants.COLUMN_STATUS_URL, expandUrlResponse.getStatus());
+                            contentValues.add(cv);
                             Log.d(TAG, " Url is " + expandUrlResponse.getId());
-                        else
-                            Log.d(TAG, " Object is null :|");
+
+                        }
+
+                        // Bulk Insert values
+                        int count  = mContentResolver.query(UrlProvider.Urls.CONTENT_URI, null, null, null, null).getCount();
+                        if ( count > 0 )
+                        {
+                            // If not empty clear all rows
+                            mContentResolver.delete(UrlProvider.Urls.CONTENT_URI, "1", null);
+                        }
+
+                        mContentResolver.bulkInsert(UrlProvider.Urls.CONTENT_URI,contentValues.toArray(new ContentValues[contentValues.size()]));
                     }
+
                 }
             }
 
