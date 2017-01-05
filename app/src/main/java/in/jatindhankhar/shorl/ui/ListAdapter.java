@@ -10,9 +10,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.jatindhankhar.shorl.R;
+import in.jatindhankhar.shorl.model.Analytics;
+import in.jatindhankhar.shorl.model.TimeData;
 import in.jatindhankhar.shorl.utils.Constants;
 import in.jatindhankhar.shorl.utils.Utils;
 
@@ -26,10 +39,12 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     private Context mContext;
     private Cursor mCursor;
+    private Gson gson;
 
     public ListAdapter(Context mContext, Cursor mCursor) {
         this.mContext = mContext;
         this.mCursor = mCursor;
+        gson = new Gson();
     }
 
     @Override
@@ -49,7 +64,10 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         holder.shortUrl.setText(shortUrl);
 
         holder.longUrl.setText(mCursor.getString(mCursor.getColumnIndex(Constants.COLUMN_LONG_URL)));
-        //Log.d("Yolopad","Url is " );
+        String clickcount = gson.fromJson(mCursor.getString(mCursor.getColumnIndex(Constants.COLUMN_ANALYTICS_URL)),Analytics.class).getAllTime().getShortUrlClicks();
+        String createdDate = mCursor.getString(mCursor.getColumnIndex(Constants.COLUMN_CREATED_DATE_URL));
+        holder.createdText.setText(Utils.getReadbleDate(createdDate));
+        holder.clickCount.setText(clickcount + " Clicks ");
     }
 
     public Cursor swapCursor(Cursor cursor) {
@@ -76,6 +94,10 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         TextView shortUrl;
         @BindView(R.id.long_url)
         TextView longUrl;
+        @BindView(R.id.click_count)
+        TextView clickCount;
+        @BindView(R.id.created_text)
+        TextView createdText;
 
         public ViewHolder(View itemView) {
             super(itemView);

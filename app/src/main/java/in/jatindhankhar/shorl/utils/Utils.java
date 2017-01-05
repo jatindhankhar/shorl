@@ -9,6 +9,13 @@ import android.util.Log;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import in.jatindhankhar.shorl.ui.LoginActivity;
 
@@ -75,5 +82,21 @@ public final class Utils {
             return null;
         else
             return targetUrl.getHost() + targetUrl.getPath();
+    }
+
+    public static String getReadbleDate(String createdDate)
+    {
+        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS", Locale.getDefault());
+        Date date = null;
+        try {
+            date = sdf.parse(createdDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        sdf.setTimeZone(TimeZone.getDefault());
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        DateFormat targetFormat = new SimpleDateFormat("d MMMM, yyyy", Locale.getDefault());
+        return targetFormat.format(cal.getTime());
     }
 }
