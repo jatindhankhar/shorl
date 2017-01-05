@@ -19,5 +19,6 @@
         android:layout_gravity="center_vertical"
         android:layout_margin="5dp"
         android:text="29 December,2016"
+        android:id='@+id/created_text'
         />
 </LinearLayout>

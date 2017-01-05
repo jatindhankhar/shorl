@@ -20,5 +20,6 @@
         android:textStyle="bold"
         android:layout_gravity="center_vertical"
         android:layout_margin="5dp"
+        android:id="@+id/click_count"
         android:text="4 Clicks" />
 </LinearLayout>
