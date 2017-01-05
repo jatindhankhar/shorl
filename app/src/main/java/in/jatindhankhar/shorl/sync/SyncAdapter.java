@@ -87,7 +87,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                         }
 
                         if(contentValues.size() > 0) {
-                            int res = mContentResolver.bulkInsert(UrlProvider.Urls.CONTENT_URI, contentValues.toArray(new ContentValues[contentValues.size()]));f
+                            int res = mContentResolver.bulkInsert(UrlProvider.Urls.CONTENT_URI, contentValues.toArray(new ContentValues[contentValues.size()]));
                             Log.d(TAG, "Inserted " + res + " rows");
                         }
                     }
