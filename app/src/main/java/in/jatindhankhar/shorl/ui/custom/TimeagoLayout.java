@@ -1,13 +1,20 @@
 package in.jatindhankhar.shorl.ui.custom;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.miguelcatalan.materialsearchview.utils.AnimationUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,7 +31,7 @@ public class TimeagoLayout extends LinearLayout {
     private Drawable mAgoDrawable;
     private Drawable mNormalDrawable;
     private String mTargetDate;
-
+    private Context mContext;
     @BindView(R.id.complementary_drawable)
     View complementary_drawable;
     @BindView(R.id.date_text)
@@ -34,6 +41,7 @@ public class TimeagoLayout extends LinearLayout {
 
     public TimeagoLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.mContext = context;
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TimeagoLayout, 0, 0);
         try {
             mShowAgo = a.getBoolean(R.styleable.TimeagoLayout_showAgoDefault, false);
@@ -49,7 +57,9 @@ public class TimeagoLayout extends LinearLayout {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.time_ago_layout,this,true);
         ButterKnife.bind(this);
-
+        setComplementaryDrawable();
+        initView();
+        //setDate(); // calling setDate causes Inflation Exception. No idea. Maybe because if targetDate is not specified inside
 
 
     }
@@ -57,7 +67,8 @@ public class TimeagoLayout extends LinearLayout {
     private void initView()
     {
         setComplementaryDrawable();
-        setDate();
+        if(mTargetDate != null)
+        {setDate();} // Avoid crash
     }
 
     private void setComplementaryDrawable()
@@ -75,6 +86,7 @@ public class TimeagoLayout extends LinearLayout {
 
     private void setDate()
     {
+
         if(mShowAgo)
         {
             dateText.setText(Utils.getRelativeTime(mTargetDate));
@@ -88,16 +100,19 @@ public class TimeagoLayout extends LinearLayout {
     public void setTargetDate(String date)
     {
         mTargetDate = date;
+        setDate();
     }
 
     public void setAgoDrawable(Drawable drawable)
     {
         mAgoDrawable = drawable;
+        setComplementaryDrawable();
     }
 
     public void setNormalDrawable(Drawable drawable)
     {
         mNormalDrawable = drawable;
+        setComplementaryDrawable();
     }
 
     public void setShowAgo(boolean val)
@@ -105,11 +120,52 @@ public class TimeagoLayout extends LinearLayout {
         mShowAgo = val;
     }
 
-    public void toggleView()
+    private void toggleView()
     {
         mShowAgo = !(mShowAgo); // Toggle the behavior
         // Then call new methods
         initView();
+        animateView();
+
+    }
+
+    private void animateView()
+    {
+        /*Animation slideInRight = AnimationUtils.loadAnimation(mContext,R.anim.slide_in_right);
+        slideInRight.setDuration(500);
+        parentLayout.setAnimation(slideInRight);*/
+
+        Animation fadeOut = new AlphaAnimation(1, 0);
+        fadeOut.setInterpolator(new AccelerateInterpolator());
+        fadeOut.setDuration(300);
+
+        fadeOut.setAnimationListener(new Animation.AnimationListener()
+        {
+            public void onAnimationEnd(Animation animation)
+            {
+               // parentLayout.setVisibility(View.GONE);
+            }
+            public void onAnimationRepeat(Animation animation) {}
+            public void onAnimationStart(Animation animation) {}
+        });
+
+        Animation showIn = new AlphaAnimation(0, 1);
+        showIn.setInterpolator(new AccelerateInterpolator());
+        showIn.setDuration(300);
+
+        showIn.setAnimationListener(new Animation.AnimationListener()
+        {
+            public void onAnimationEnd(Animation animation)
+            {
+                // parentLayout.setVisibility(View.GONE);
+            }
+            public void onAnimationRepeat(Animation animation) {}
+            public void onAnimationStart(Animation animation) {}
+        });
+
+        parentLayout.startAnimation(fadeOut);
+        parentLayout.setAnimation(showIn);
+
     }
 
     @OnClick(R.id.parent_layout)

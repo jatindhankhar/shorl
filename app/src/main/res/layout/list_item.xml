@@ -60,8 +60,8 @@
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:id="@+id/timeagoLayout"
-                    timeAgoLayout:showAgoDefault="false"
-                    timeAgoLayout:agoDrawable="@drawable/trending"
+                    timeAgoLayout:showAgoDefault="true"
+                    timeAgoLayout:agoDrawable="@drawable/history_ago"
                     timeAgoLayout:normalDrawable="@drawable/date_cal"
                     />
 
