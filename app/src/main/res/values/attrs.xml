@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TimeagoLayout">
+        <attr name="showAgoDefault" format="boolean" />
+        <attr name="agoDrawable" format="reference" />
+        <attr name="normalDrawable" format="reference" />
+        <attr name="targetDate" format="string" />
+    </declare-styleable>
+</resources>

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import java.net.MalformedURLException;
@@ -84,7 +85,7 @@ public final class Utils {
             return targetUrl.getHost() + targetUrl.getPath();
     }
 
-    public static String getReadbleDate(String createdDate)
+    public static String getReadbleDate(@NonNull  String createdDate)
     {
         DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS", Locale.getDefault());
         Date date = null;
@@ -92,11 +93,80 @@ public final class Utils {
             date = sdf.parse(createdDate);
         } catch (ParseException e) {
             e.printStackTrace();
+            return null;
         }
         sdf.setTimeZone(TimeZone.getDefault());
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
-        DateFormat targetFormat = new SimpleDateFormat("d MMMM, yyyy", Locale.getDefault());
+        DateFormat targetFormat = new SimpleDateFormat("d MMM, yyyy", Locale.getDefault());
         return targetFormat.format(cal.getTime());
+    }
+
+    // Thanks to http://stackoverflow.com/a/24339774/3455743
+    public static String getRelativeTime(@NonNull  String createdDate) {
+        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS", Locale.getDefault());
+        Date fromdate = null;
+        try {
+            fromdate = sdf.parse(createdDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+        long then;
+        then = fromdate.getTime();
+        Date date = new Date(then);
+
+        StringBuffer dateStr = new StringBuffer();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        Calendar now = Calendar.getInstance();
+
+        int days = daysBetween(calendar.getTime(), now.getTime());
+        int minutes = hoursBetween(calendar.getTime(), now.getTime());
+        int hours = minutes / 60;
+        if (days == 0) {
+
+            int second = minuteBetween(calendar.getTime(), now.getTime());
+            if (minutes > 60) {
+
+                if (hours >= 1 && hours <= 24) {
+                    dateStr.append(hours).append(" hours ago");
+                }
+
+            } else {
+
+                if (second <= 10) {
+                    dateStr.append("Now");
+                } else if (second > 10 && second <= 30) {
+                    dateStr.append("few seconds ago");
+                } else if (second > 30 && second <= 60) {
+                    dateStr.append(second).append(" seconds ago");
+                } else if (second >= 60 && minutes <= 60) {
+                    dateStr.append(minutes).append(" minutes ago");
+                }
+            }
+        } else
+
+        if (hours > 24 && days <= 7) {
+            dateStr.append(days).append(" days ago");
+        } else {
+           return getReadbleDate(createdDate);
+            // ;
+        }
+
+        return dateStr.toString();
+    }
+
+    public static int minuteBetween(Date d1, Date d2) {
+        return (int) ((d2.getTime() - d1.getTime()) / DateUtils.SECOND_IN_MILLIS);
+    }
+
+    public static int hoursBetween(Date d1, Date d2) {
+        return (int) ((d2.getTime() - d1.getTime()) / DateUtils.MINUTE_IN_MILLIS);
+    }
+
+    public static int daysBetween(Date d1, Date d2) {
+        return (int) ((d2.getTime() - d1.getTime()) / DateUtils.DAY_IN_MILLIS);
     }
 }

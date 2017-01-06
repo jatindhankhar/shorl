@@ -23,6 +23,7 @@ import java.util.TimeZone;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import in.jatindhankhar.shorl.R;
 import in.jatindhankhar.shorl.model.Analytics;
 import in.jatindhankhar.shorl.model.TimeData;
@@ -68,6 +69,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         String createdDate = mCursor.getString(mCursor.getColumnIndex(Constants.COLUMN_CREATED_DATE_URL));
         holder.createdText.setText(Utils.getReadbleDate(createdDate));
         holder.clickCount.setText(clickcount + " Clicks ");
+        Log.d("Yolopad", "Custom date is " + Utils.getRelativeTime(createdDate));
+
+
     }
 
     public Cursor swapCursor(Cursor cursor) {
@@ -103,6 +107,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             super(itemView);
             ButterKnife.bind(this, itemView);
             ButterKnife.setDebug(true);
+
         }
 
     }
