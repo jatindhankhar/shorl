@@ -4,6 +4,8 @@ import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -148,9 +150,19 @@ public final class Utils {
             }
         } else
 
-        if (hours > 24 && days <= 7) {
+        if (hours > 24 ) {
             dateStr.append(days).append(" days ago");
-        } else {
+        }
+         if(days > 31 && days <= 366)
+        {
+            dateStr.append(days/30).append(" months ago");
+        }
+
+         if ( days > 366)
+        {
+            dateStr.append(days/365).append(" years ago");
+        }
+        else {
            return getReadbleDate(createdDate);
             // ;
         }
@@ -168,5 +180,21 @@ public final class Utils {
 
     public static int daysBetween(Date d1, Date d2) {
         return (int) ((d2.getTime() - d1.getTime()) / DateUtils.DAY_IN_MILLIS);
+    }
+
+    public static boolean isConnected(Context context) {
+        ConnectivityManager conMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED
+                || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+
+            // notify user you are online
+            return true;
+
+        } else if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
+                || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
+            return false;
+        }
+        return false;
     }
 }

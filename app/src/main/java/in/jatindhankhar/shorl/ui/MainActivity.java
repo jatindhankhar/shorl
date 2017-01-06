@@ -4,8 +4,10 @@ import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -17,11 +19,14 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import in.jatindhankhar.shorl.R;
 import in.jatindhankhar.shorl.database.UrlProvider;
 import in.jatindhankhar.shorl.model.NewUrl;
@@ -73,6 +78,24 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         newUrl.setLongUrl("https://reddit.com/r/programming");
         getSupportLoaderManager().initLoader(LOADER_ID, null, MainActivity.this);
 
+        if( ! Utils.isConnected(mContext))
+        {
+           Snackbar sb = Snackbar.make(coordinatorLayout,"It looks like you are not connected. Some features requires Internet Connection",Snackbar.LENGTH_LONG);
+           sb.setAction("Dismiss", new View.OnClickListener() {
+               @Override
+               public void onClick(View v) {
+
+               }
+           }).setActionTextColor(Color.YELLOW);
+
+            // Enable multiline snack bar
+            TextView tv= (TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text);
+            tv.setMaxLines(3);
+
+
+            sb.show();
+
+        }
 
       /*  googlClient.createUrl(newUrl).enqueue(new Callback<HistoryItem>() {
             @Override
