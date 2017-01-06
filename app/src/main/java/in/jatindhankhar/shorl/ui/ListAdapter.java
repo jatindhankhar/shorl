@@ -27,6 +27,7 @@ import butterknife.OnClick;
 import in.jatindhankhar.shorl.R;
 import in.jatindhankhar.shorl.model.Analytics;
 import in.jatindhankhar.shorl.model.TimeData;
+import in.jatindhankhar.shorl.ui.custom.TimeagoLayout;
 import in.jatindhankhar.shorl.utils.Constants;
 import in.jatindhankhar.shorl.utils.Utils;
 
@@ -67,7 +68,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         holder.longUrl.setText(mCursor.getString(mCursor.getColumnIndex(Constants.COLUMN_LONG_URL)));
         String clickcount = gson.fromJson(mCursor.getString(mCursor.getColumnIndex(Constants.COLUMN_ANALYTICS_URL)),Analytics.class).getAllTime().getShortUrlClicks();
         String createdDate = mCursor.getString(mCursor.getColumnIndex(Constants.COLUMN_CREATED_DATE_URL));
-        holder.createdText.setText(Utils.getReadbleDate(createdDate));
+        holder.timeagoLayout.setTargetDate(createdDate);
         holder.clickCount.setText(clickcount + " Clicks ");
         Log.d("Yolopad", "Custom date is " + Utils.getRelativeTime(createdDate));
 
@@ -100,8 +101,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         TextView longUrl;
         @BindView(R.id.click_count)
         TextView clickCount;
-        @BindView(R.id.created_text)
-        TextView createdText;
+        @BindView(R.id.timeagoLayout)
+        TimeagoLayout timeagoLayout;
 
         public ViewHolder(View itemView) {
             super(itemView);
