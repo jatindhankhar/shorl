@@ -31,6 +31,7 @@ import in.jatindhankhar.shorl.database.UrlProvider;
 import in.jatindhankhar.shorl.model.NewUrl;
 import in.jatindhankhar.shorl.network.GooglClient;
 import in.jatindhankhar.shorl.network.ServiceGenerator;
+import in.jatindhankhar.shorl.utils.Constants;
 import in.jatindhankhar.shorl.utils.Utils;
 
 
@@ -74,7 +75,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             @Override
             public void onItemClick(View view, int position) {
                 Toast.makeText(MainActivity.this, "I was clicked at "  + position, Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(MainActivity.this,DetailActivity.class));
+                Intent intent = new Intent(MainActivity.this,DetailActivity.class);
+                Cursor cusror =  mListAdpater.getCursor();
+                intent.putExtra("test",cusror.getString(cusror.getColumnIndex(Constants.COLUMN_SHORT_URL)));
+                startActivity(intent);
             }
         });
 
