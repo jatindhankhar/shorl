@@ -14,19 +14,18 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import in.jatindhankhar.shorl.R;
 import in.jatindhankhar.shorl.database.UrlProvider;
 import in.jatindhankhar.shorl.model.NewUrl;
@@ -58,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        Context mContext = this;
+        final Context mContext = this;
         // If not logged in ask user to Login
         if (!Utils.isLoggedIn(mContext)) {
             startActivity(new Intent(this, LoginActivity.class));
@@ -68,7 +67,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         toolbar.setTitle("Shorl");
         recyclerview.setHasFixedSize(true);
         recyclerview.setLayoutManager(new LinearLayoutManager(this));
-        mListAdpater = new ListAdapter(getApplicationContext(), null);
+        mListAdpater = new ListAdapter(mContext, null);
+
+        // Thanks to http://stackoverflow.com/a/25958900/3455743 it doesn't overrides onTouch Events of subviews :D
+        mListAdpater.SetOnItemClickListener(new ListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Toast.makeText(MainActivity.this, "I was clicked at "  + position, Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(MainActivity.this,DetailActivity.class));
+            }
+        });
+
         recyclerview.setAdapter(mListAdpater);
         GooglClient googlClient = ServiceGenerator.createService(GooglClient.class, Utils.getAuthToken(mContext));
 
@@ -136,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoaderReset(Loader<Cursor> loader) {
         mListAdpater.swapCursor(null);
     }
+
 
 
 }

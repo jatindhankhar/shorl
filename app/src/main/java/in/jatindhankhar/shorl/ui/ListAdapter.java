@@ -1,6 +1,7 @@
 package in.jatindhankhar.shorl.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v7.widget.CardView;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -42,6 +44,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     private Context mContext;
     private Cursor mCursor;
     private Gson gson;
+    OnItemClickListener mItemClickListener;
 
     public ListAdapter(Context mContext, Cursor mCursor) {
         this.mContext = mContext;
@@ -59,7 +62,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         mCursor.moveToPosition(position);
 
         String shortUrl = Utils.getGooglShortUrl(mCursor.getString(mCursor.getColumnIndex(Constants.COLUMN_SHORT_URL)));
@@ -92,7 +95,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         return (mCursor == null) ? 0 : mCursor.getCount();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         @BindView(R.id.card_view)
         CardView cardView;
         @BindView(R.id.short_url)
@@ -108,8 +111,24 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             super(itemView);
             ButterKnife.bind(this, itemView);
             ButterKnife.setDebug(true);
+            itemView.setOnClickListener(this);
 
         }
 
+
+        @Override
+        public void onClick(View v) {
+            if (mItemClickListener != null) {
+                mItemClickListener.onItemClick(v, getPosition());
+            }
+        }
+    }
+
+    public interface OnItemClickListener {
+        public void onItemClick(View view , int position);
+    }
+
+    public void SetOnItemClickListener(final OnItemClickListener mItemClickListener) {
+        this.mItemClickListener = mItemClickListener;
     }
 }
