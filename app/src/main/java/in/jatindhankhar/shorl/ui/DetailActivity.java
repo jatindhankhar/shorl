@@ -31,7 +31,7 @@ public class DetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("Detail");
         Toast.makeText(this, "Yo " + getIntent().getStringExtra("test"), Toast.LENGTH_SHORT).show();
-        qrcode.setImageBitmap(QRCode.from("www.example.org").bitmap());
+        qrcode.setImageBitmap(QRCode.from("www.example.org").withSize(300,300).bitmap());
 
 
     }

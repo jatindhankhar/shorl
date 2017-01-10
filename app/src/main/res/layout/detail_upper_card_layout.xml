@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/tools"
+    xmlns:timeAgoLayout="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parent_container">
+    <!-- A CardView that contains a TextView -->
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        card_view:cardCornerRadius="4dp"
+        card_view:cardElevation="10dp"
+        android:layout_margin="10dp"
+        >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            >
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/links_wrapper"
+                android:orientation="horizontal"
+                >
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="0.6"
+                >
+            <TextView
+                android:id="@+id/short_url"
+                android:text="goo.gl/eefs4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="30sp"
+                android:ellipsize="end"
+                android:paddingBottom="20dp"
+
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/long_url"
+                android:paddingBottom="20dp"
+                android:text="https://www.google.com/"
+                android:textStyle="italic"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:layout_below="@+id/short_url"
+                android:autoLink="web"
+                android:textColorLink="@android:color/holo_blue_dark"
+                />
+            </LinearLayout>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/splash"
+                android:layout_weight="0.4"
+                android:id="@+id/qrcode"
+                android:gravity="right|end"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                />
+            </LinearLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/icon_layer"
+                android:layout_below="@+id/links_wrapper"
+                >
+
+
+                <!-- <include layout="@layout/created_layout" /> -->
+                <in.jatindhankhar.shorl.ui.custom.TimeagoLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:id="@+id/timeagoLayout"
+                    timeAgoLayout:showAgoDefault="true"
+                    timeAgoLayout:agoDrawable="@drawable/history_ago"
+                    timeAgoLayout:normalDrawable="@drawable/date_cal"
+                    />
+
+                <include layout="@layout/click_layout" />
+            </RelativeLayout>
+
+
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+</LinearLayout>
