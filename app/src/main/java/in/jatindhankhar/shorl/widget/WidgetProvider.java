@@ -32,12 +32,19 @@ public class WidgetProvider extends AppWidgetProvider{
         appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
     }
 
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+    }
+
     private RemoteViews createAppWidgetRemoteViews(Context context, int appWidgetId) {
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
         Intent intent = new Intent(context,WidgetService.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
         remoteViews.setRemoteAdapter(R.id.widget_list,intent);
+        //remoteViews.setRemoteAdapter(R.id.widget_list,intent);
+
 
         return remoteViews;
     }

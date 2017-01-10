@@ -29,7 +29,8 @@ public class WidgetFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onCreate() {
-
+        mCursor = mContext.getContentResolver().query(in.jatindhankhar.shorl.database.UrlProvider.Urls.CONTENT_URI,null
+                ,null,null,null);
     }
 
     @Override
@@ -59,19 +60,21 @@ public class WidgetFactory implements RemoteViewsService.RemoteViewsFactory {
         {
             shortUrl = mCursor.getString(mCursor.getColumnIndex(Constants.COLUMN_SHORT_URL));
         }
-        RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.list_item);
+
+        RemoteViews rv = new RemoteViews(mContext.getPackageName(),R.layout.widget_item_layout);
         rv.setTextViewText(R.id.short_url,shortUrl);
         return rv;
     }
 
     @Override
     public RemoteViews getLoadingView() {
-        return new RemoteViews(mContext.getPackageName(), R.layout.list_item);
+       // return new RemoteViews(mContext.getPackageName(), R.layout.list_item);
+        return null;
     }
 
     @Override
     public int getViewTypeCount() {
-        return 0;
+        return 1;
     }
 
     @Override
