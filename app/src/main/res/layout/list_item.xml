@@ -30,6 +30,7 @@
                 android:textStyle="bold"
                 android:textSize="30sp"
                 android:ellipsize="end"
+                android:maxLines="2"
                 android:paddingBottom="20dp"
 
                 />
