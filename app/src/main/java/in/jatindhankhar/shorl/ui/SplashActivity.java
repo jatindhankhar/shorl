@@ -42,7 +42,7 @@ public class SplashActivity extends AppCompatActivity {
         mContext = getApplicationContext();
 
 
-        // Launch correct activity bases on the user session state
+        // Launch correct activity based on the user session state
         if(Utils.isLoggedIn(mContext))
         {
             startActivity(new Intent(this,MainActivity.class));}
