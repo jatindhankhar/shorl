@@ -76,8 +76,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             public void onItemClick(View view, int position) {
                 Toast.makeText(MainActivity.this, "I was clicked at "  + position, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this,DetailActivity.class);
-                Cursor cusror =  mListAdpater.getCursor();
-                intent.putExtra("test",cusror.getString(cusror.getColumnIndex(Constants.COLUMN_SHORT_URL)));
+                Cursor cursor =  mListAdpater.getCursor();
+                cursor.moveToPosition(position);
+                intent.putExtra(Constants.ARG_SHORT_URL,cursor.getString(cursor.getColumnIndex(Constants.COLUMN_SHORT_URL)));
+                intent.putExtra(Constants.ARG_LONG_URL,cursor.getString(cursor.getColumnIndex(Constants.COLUMN_LONG_URL)));
+                intent.putExtra(Constants.ARG_CREATED_DATE,cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CREATED_DATE_URL)));
+                intent.putExtra(Constants.ARG_ANALYTICS_DATA,cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ANALYTICS_URL)));
                 startActivity(intent);
             }
         });

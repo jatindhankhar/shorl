@@ -27,12 +27,13 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/links_wrapper"
                 android:orientation="horizontal"
+                android:layout_gravity="center"
                 >
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_weight="0.6"
+                android:layout_weight="1"
                 >
             <TextView
                 android:id="@+id/short_url"
@@ -60,17 +61,6 @@
                 android:textColorLink="@android:color/holo_blue_dark"
                 />
             </LinearLayout>
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/splash"
-                android:layout_weight="0.4"
-                android:id="@+id/qrcode"
-                android:gravity="right|end"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                />
             </LinearLayout>
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -93,6 +83,18 @@
                 <include layout="@layout/click_layout" />
             </RelativeLayout>
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/splash"
+                android:id="@+id/qrcode"
+                android:layout_above="@+id/icon_layer"
+                android:layout_alignParentRight="true"
+                android:layout_toRightOf="@+id/links_wrapper"
+                android:layout_alignParentEnd="true"
+                android:cropToPadding="true"
+                 />
 
 
         </RelativeLayout>

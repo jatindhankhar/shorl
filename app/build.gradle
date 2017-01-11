@@ -57,6 +57,10 @@ dependencies {
     // For Qrcodes
     compile 'com.github.kenglxn.QRGen:android:2.2.0'
 
+    // For Pie-Charts and stuff
+    compile 'com.github.PhilJay:MPAndroidChart:v3.0.1'
+
+
 
 
 

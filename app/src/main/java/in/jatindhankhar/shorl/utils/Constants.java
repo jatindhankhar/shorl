@@ -31,5 +31,9 @@ public final  class Constants {
     public static final String COLUMN_ANALYTICS_URL = "analytics";
     public static final String COLUMN_FAVOURITE = "favourite";
     public final static String DATABASE_NAME = "shorl";
+    public final static String ARG_SHORT_URL = "arg_short_url";
+    public final static String ARG_LONG_URL = "arg_long_url";
+    public final static String ARG_CREATED_DATE = "arg_created_date";
+    public final static String ARG_ANALYTICS_DATA = "arg_analytics_data";
     public final static int DATABASE_VERSION = 3;
 }
