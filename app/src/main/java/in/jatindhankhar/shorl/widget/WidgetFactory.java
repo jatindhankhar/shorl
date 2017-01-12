@@ -8,7 +8,6 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import in.jatindhankhar.shorl.R;
-import in.jatindhankhar.shorl.database.generated.UrlProvider;
 import in.jatindhankhar.shorl.utils.Constants;
 
 /**
