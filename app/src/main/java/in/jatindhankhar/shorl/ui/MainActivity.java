@@ -1,16 +1,23 @@
 package in.jatindhankhar.shorl.ui;
 
+import android.Manifest;
+import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -47,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     Toolbar toolbar;
     @BindView(R.id.search_view)
     MaterialSearchView searchView;
+    @BindView(R.id.swipe_refresh)
+    SwipeRefreshLayout swipeRefreshLayout;
 
 
     private AccountManager mAccountManager;
@@ -61,8 +70,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         final Context mContext = this;
         // If not logged in ask user to Login
         if (!Utils.isLoggedIn(mContext)) {
-            startActivity(new Intent(this, LoginActivity.class));
+            invokeLogin();
         }
+        if(getIntent().getBooleanExtra(Constants.ARG_NEW_USER,false))
+        {
+            requestSync();
+        }
+
         ServiceGenerator serviceGenerator = new ServiceGenerator(MainActivity.this);
         setSupportActionBar(toolbar);
         toolbar.setTitle("Shorl");
@@ -74,7 +88,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mListAdpater.SetOnItemClickListener(new ListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Toast.makeText(MainActivity.this, "I was clicked at "  + position, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this,DetailActivity.class);
                 Cursor cursor =  mListAdpater.getCursor();
                 cursor.moveToPosition(position);
@@ -112,6 +125,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             sb.show();
 
+            swipeRefreshLayout.setEnabled(false);
+
+        }
+
+        else
+        {
+            swipeRefreshLayout.setEnabled(true);
         }
 
       /*  googlClient.createUrl(newUrl).enqueue(new Callback<HistoryItem>() {
@@ -127,7 +147,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         }); */
 
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                requestSync();
+                Snackbar sb = Snackbar.make(coordinatorLayout,"Syncing data. This may take some time depending upon the internet connection",Snackbar.LENGTH_INDEFINITE);
+                sb.show();
+                sb.setAction("Dismiss", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        swipeRefreshLayout.setRefreshing(false);
 
+                    }
+                }).setActionTextColor(Color.YELLOW);
+            }
+        });
     }
 
     @Override
@@ -156,5 +190,47 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 
 
+    private void requestSync()
+    {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            //return;
+            //ActivityCompat.requestPermissions();
+            invokeLogin();
+        }
+        Account targetAccount = null;
+        for (Account account : AccountManager.get(getBaseContext()).getAccountsByType("com.google")) {
+            if (account.name.equals(Utils.getLoginEmail(getBaseContext()))) {
+                targetAccount = account;
+                break;
+            }
+        }
+
+        if(targetAccount != null)
+        {
+            Log.d(TAG,"Requesting immediate sync");
+            Bundle settingsBundle = new Bundle();
+            settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+            settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL,true);
+            settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED,true);
+            ContentResolver.requestSync(targetAccount,"in.jatindhankhar.shorl.database.UrlProvider",settingsBundle);
+        }
+
+        else
+        {
+            invokeLogin();
+        }
+    }
+
+    private  void invokeLogin()
+    {
+        startActivity(new Intent(this, LoginActivity.class));
+    }
 }
 

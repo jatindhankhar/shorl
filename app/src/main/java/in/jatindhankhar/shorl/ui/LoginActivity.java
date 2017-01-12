@@ -130,7 +130,9 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         if(loginSuccess)
         {
             Utils.setLoginSession(mContext,mAccountName,mAccountEmail);
-            startActivity(new Intent(mContext,MainActivity.class));
+            Intent intent = new Intent(mContext,MainActivity.class);
+            intent.putExtra(Constants.ARG_NEW_USER,true);
+            startActivity(intent);
         }
         else
         {

@@ -35,5 +35,6 @@ public final  class Constants {
     public final static String ARG_LONG_URL = "arg_long_url";
     public final static String ARG_CREATED_DATE = "arg_created_date";
     public final static String ARG_ANALYTICS_DATA = "arg_analytics_data";
+    public final static String ARG_NEW_USER = "arg_new_user";
     public final static int DATABASE_VERSION = 3;
 }
