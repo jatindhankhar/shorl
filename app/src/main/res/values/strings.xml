@@ -3,4 +3,9 @@
     <string name="title_activity_login">"Shorl - Sign in "</string>
     <string name="no_internet_message">It looks like you are not connected. Some features requires Internet Connection</string>
     <string name="sync_message">Syncing data. This may take some time depending upon the internet connection</string>
+    <string name="default_date">29 December,2016</string>
+    <string name="chart_error">Not enough Clicks to show chart</string>
+    <string name="default_short_url">goo.gl/eefs4</string>
+    <string name="default_long_url">https://www.google.com/</string>
+    <string name="no_data_available">No data available</string>
 </resources>

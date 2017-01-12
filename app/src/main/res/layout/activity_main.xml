@@ -70,7 +70,7 @@
     android:layout_margin="12dp"
     android:src="@drawable/add_white"
     app:fabSize="normal"
-    app:layout_anchorGravity="bottom|end"
+    app:layout_anchorGravity="bottom|right|end"
     app:layout_behavior=".ui.custom.FABScrollBehavior"
     />
 </android.support.design.widget.CoordinatorLayout>
