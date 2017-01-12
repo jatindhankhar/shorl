@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">Shorl</string>
     <string name="title_activity_login">"Shorl - Sign in "</string>
+    <string name="no_internet_message">It looks like you are not connected. Some features requires Internet Connection</string>
+    <string name="sync_message">Syncing data. This may take some time depending upon the internet connection</string>
 </resources>

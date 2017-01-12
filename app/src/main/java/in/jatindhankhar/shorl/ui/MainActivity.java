@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         if( ! Utils.isConnected(mContext))
         {
-           Snackbar sb = Snackbar.make(coordinatorLayout,"It looks like you are not connected. Some features requires Internet Connection",Snackbar.LENGTH_LONG);
+           Snackbar sb = Snackbar.make(coordinatorLayout, R.string.no_internet_message,Snackbar.LENGTH_LONG);
            sb.setAction("Dismiss", new View.OnClickListener() {
                @Override
                public void onClick(View v) {
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             @Override
             public void onRefresh() {
                 requestSync();
-                Snackbar sb = Snackbar.make(coordinatorLayout,"Syncing data. This may take some time depending upon the internet connection",Snackbar.LENGTH_INDEFINITE);
+                Snackbar sb = Snackbar.make(coordinatorLayout, R.string.sync_message,Snackbar.LENGTH_INDEFINITE);
                 sb.show();
                 sb.setAction("Dismiss", new View.OnClickListener() {
                     @Override
