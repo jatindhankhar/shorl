@@ -21,8 +21,11 @@ import in.jatindhankhar.shorl.utils.Constants;
 public class ShorlAuthenticator extends AbstractAccountAuthenticator {
     private static final String LOG_TAG = ShorlAuthenticator.class.getSimpleName();
 
+    private Context mContext;
+
     public ShorlAuthenticator(Context context) {
         super(context);
+        this.mContext = context;
     }
 
     @Override
@@ -32,7 +35,14 @@ public class ShorlAuthenticator extends AbstractAccountAuthenticator {
 
     @Override
     public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType, String[] requiredFeatures, Bundle options) throws NetworkErrorException {
-        return null;
+        final Intent intent = new Intent(mContext,LoginActivity.class);
+        intent.putExtra(Constants.ARG_ACCOUNT_TYPE, accountType);
+        intent.putExtra(Constants.ARG_AUTH_TYPE, authTokenType);
+        intent.putExtra(Constants.ARG_IS_ADDING_NEW_ACCOUNT, true);
+        intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
+        final  Bundle bundle = new Bundle();
+        bundle.putParcelable(AccountManager.KEY_INTENT,intent);
+        return  bundle;
     }
 
     @Override
