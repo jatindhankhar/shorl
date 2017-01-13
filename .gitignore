@@ -46,3 +46,5 @@ captures/
 
 # Google Service speicfic json files
 *.json
+# Keystore for signing
+/keystore.properties
