@@ -9,4 +9,8 @@
     <string name="default_long_url">https://www.google.com/</string>
     <string name="no_data_available">No data available</string>
     <string name="user_input_hint">Enter your Url here</string>
+    <string name="new_url_creation_error">Failed to create new url</string>
+    <string name="new_url_create_success">"New url added "</string>
+    <string name="sync_finished">Sync Finished</string>
+    <string name="empty_data_message">It\'s quite lonely here. Create a short url :)</string>
 </resources>

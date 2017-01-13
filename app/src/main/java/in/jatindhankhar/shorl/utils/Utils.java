@@ -153,15 +153,7 @@ public final class Utils {
         if (hours > 24 ) {
             dateStr.append(days).append(" days ago");
         }
-         if(days > 31 && days <= 366)
-        {
-            dateStr.append(days/30).append(" months ago");
-        }
 
-         if ( days > 366)
-        {
-            dateStr.append(days/365).append(" years ago");
-        }
         else {
            return getReadbleDate(createdDate);
             // ;
@@ -197,4 +189,18 @@ public final class Utils {
         }
         return false;
     }
+
+    // Thanks to
+    public static String getISO8601StringForCurrentDate() {
+    Date now = new Date();
+    return getISO8601StringForDate(now);
+    }
+
+
+    private static String getISO8601StringForDate(Date date) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return dateFormat.format(date);
+    }
+
 }

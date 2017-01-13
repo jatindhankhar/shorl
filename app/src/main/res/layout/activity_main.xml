@@ -57,7 +57,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-    <include layout="@layout/input_box" />
+    <include layout="@layout/input_box"  android:id="@+id/input_box"
+        android:visibility="gone"
+        />
+     <include layout="@layout/empty_error_layout"
+         android:id="@+id/empty_error_layout"
+         android:visibility="gone"
+         />
     <android.support.v7.widget.RecyclerView
     android:id="@+id/recyclerview"
     android:layout_width="match_parent"

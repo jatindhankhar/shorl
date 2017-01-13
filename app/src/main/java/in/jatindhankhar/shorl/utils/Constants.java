@@ -7,6 +7,8 @@ import in.jatindhankhar.shorl.BuildConfig;
  */
 
 public final  class Constants {
+
+
     private Constants() { } // To avoid Instantion
     public static final String PREF_FILE = "ShorlPref"; // TODO - Set name programmatically
     public static final String IS_LOGGED_IN = "IS_LOGGED_IN";
@@ -37,4 +39,5 @@ public final  class Constants {
     public final static String ARG_ANALYTICS_DATA = "arg_analytics_data";
     public final static String ARG_NEW_USER = "arg_new_user";
     public final static int DATABASE_VERSION = 3;
+    public static final String ACTION_SYNC_FINISHED = PACKAGE_NAME + "SYNC_FINISHED";
 }

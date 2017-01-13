@@ -4,12 +4,17 @@ import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -18,8 +23,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -27,6 +34,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.OvershootInterpolator;
+import android.webkit.URLUtil;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,19 +47,26 @@ import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnTextChanged;
 import in.jatindhankhar.shorl.R;
 import in.jatindhankhar.shorl.database.UrlProvider;
+import in.jatindhankhar.shorl.model.ExpandUrlResponse;
+import in.jatindhankhar.shorl.model.HistoryItem;
 import in.jatindhankhar.shorl.model.NewUrl;
 import in.jatindhankhar.shorl.network.GooglClient;
 import in.jatindhankhar.shorl.network.ServiceGenerator;
 import in.jatindhankhar.shorl.utils.Constants;
 import in.jatindhankhar.shorl.utils.Utils;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int LOADER_ID = 1;
+    private static IntentFilter syncIntentFilter = new IntentFilter(Constants.ACTION_SYNC_FINISHED);
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
     @BindView(R.id.activity_main)
@@ -60,10 +79,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.fab_add)
     FloatingActionButton floatingActionButton;
+    @BindView(R.id.input_box)
+    View inputBox;
+    @BindView(R.id.cleartext)
+    Button clearText;
+    @BindView(R.id.url_input)
+    AppCompatEditText inputField;
+    @BindView(R.id.submit)
+    ImageView submitButton;
 
     private AccountManager mAccountManager;
     private ListAdapter mListAdpater;
-
+    private GooglClient googlClient;
+    private ContentObserver mContentObserver;
+    private Snackbar sb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,14 +104,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (!Utils.isLoggedIn(mContext)) {
             invokeLogin();
         }
-        if(getIntent().getBooleanExtra(Constants.ARG_NEW_USER,false))
+        if(getIntent().getBooleanExtra(Constants.ARG_IS_ADDING_NEW_ACCOUNT,false))
         {
+            swipeRefreshLayout.setRefreshing(true);
             requestSync();
         }
 
-        ServiceGenerator serviceGenerator = new ServiceGenerator(MainActivity.this);
         setSupportActionBar(toolbar);
-        toolbar.setTitle("Shorl");
+        toolbar.setTitle(R.string.app_name);
         recyclerview.setHasFixedSize(true);
         recyclerview.setLayoutManager(new LinearLayoutManager(this));
         mListAdpater = new ListAdapter(mContext, null);
@@ -103,17 +132,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         });
 
         recyclerview.setAdapter(mListAdpater);
-        GooglClient googlClient = ServiceGenerator.createService(GooglClient.class, Utils.getAuthToken(mContext));
 
+        googlClient = ServiceGenerator.createService(GooglClient.class, Utils.getAuthToken(mContext));
 
-        Log.d(TAG, "We are creating a new url now ");
-        NewUrl newUrl = new NewUrl();
-        newUrl.setLongUrl("https://reddit.com/r/programming");
+        if(mListAdpater.getCursor() == null || mListAdpater.getCursor().getCount() == 0 )
+        {
+            recyclerview.setVisibility(View.GONE);
+
+        }
         getSupportLoaderManager().initLoader(LOADER_ID, null, MainActivity.this);
+
+
 
         if( ! Utils.isConnected(mContext))
         {
-           Snackbar sb = Snackbar.make(coordinatorLayout, R.string.no_internet_message,Snackbar.LENGTH_LONG);
+           sb = Snackbar.make(coordinatorLayout, R.string.no_internet_message,Snackbar.LENGTH_LONG);
            sb.setAction("Dismiss", new View.OnClickListener() {
                @Override
                public void onClick(View v) {
@@ -137,24 +170,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             swipeRefreshLayout.setEnabled(true);
         }
 
-      /*  googlClient.createUrl(newUrl).enqueue(new Callback<HistoryItem>() {
-            @Override
-            public void onResponse(Call<HistoryItem> call, Response<HistoryItem> response) {
-                HistoryItem historyItem = response.body();
-               // Log.d(TAG,"HistoryItem id is " + historyItem.getId());
-            }
 
-            @Override
-            public void onFailure(Call<HistoryItem> call, Throwable t) {
-
-            }
-        }); */
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 requestSync();
-                Snackbar sb = Snackbar.make(coordinatorLayout, R.string.sync_message,Snackbar.LENGTH_INDEFINITE);
+                Snackbar sb = Snackbar.make(coordinatorLayout, R.string.sync_message,Snackbar.LENGTH_LONG);
                 sb.show();
                 sb.setAction("Dismiss", new View.OnClickListener() {
                     @Override
@@ -195,17 +217,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private void requestSync()
     {
+
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            //return;
-            //ActivityCompat.requestPermissions();
-            invokeLogin();
+
+            // Do nothing
+            Log.d(TAG,"Fatal error");
         }
         Account targetAccount = null;
         for (Account account : AccountManager.get(getBaseContext()).getAccountsByType(Constants.PACKAGE_NAME)) {
@@ -218,12 +235,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         if(targetAccount != null)
         {
-            Log.d(TAG,"Requesting immediate sync");
-            Bundle settingsBundle = new Bundle();
-            settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-            settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL,true);
-            settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED,true);
-            ContentResolver.requestSync(targetAccount,"in.jatindhankhar.shorl.database.UrlProvider",settingsBundle);
+            final Account finalTargetAccount = targetAccount;
+           Runnable syncThread =  new Runnable() {
+
+                @Override
+                public void run() {
+                    Log.d(TAG,"Requesting immediate sync");
+                    Bundle settingsBundle = new Bundle();
+                    settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+                    settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL,true);
+                    settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED,true);
+                    ContentResolver.requestSync(finalTargetAccount,"in.jatindhankhar.shorl.database.UrlProvider",settingsBundle);
+                }
+            };
+
+            syncThread.run();
+
         }
 
         else
@@ -239,14 +266,133 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private void addNewUrl()
     {
-        Toast.makeText(this, "Damn I was clicked!", Toast.LENGTH_SHORT).show();
+        String userUrl = inputField.getText().toString();
+        NewUrl newUrl = new NewUrl();
+        newUrl.setLongUrl(userUrl);
+        googlClient.createUrl(newUrl).enqueue(new Callback<HistoryItem>() {
+            @Override
+            public void onResponse(Call<HistoryItem> call, Response<HistoryItem> response) {
+                if (response.isSuccessful()) {
+                    HistoryItem historyItem = response.body();
+
+                    String shortUrl = historyItem.getId();
+                    ContentValues cv = new ContentValues();
+                    cv.put(Constants.COLUMN_STATUS_URL, historyItem.getStatus());
+                    cv.put(Constants.COLUMN_SHORT_URL, historyItem.getId());
+                    cv.put(Constants.COLUMN_KIND_URL, historyItem.getKind());
+                    cv.put(Constants.COLUMN_LONG_URL, historyItem.getLongUrl());
+                    cv.put(Constants.COLUMN_CREATED_DATE_URL, Utils.getISO8601StringForCurrentDate());
+                    cv.put(Constants.COLUMN_ANALYTICS_URL, "{}");
+                    getContentResolver().insert(UrlProvider.Urls.CONTENT_URI, cv);
+                    cv.clear();
+                    Toast.makeText(MainActivity.this, R.string.new_url_create_success, Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<HistoryItem> call, Throwable t) {
+                Toast.makeText(MainActivity.this, R.string.new_url_creation_error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private boolean isInputVisible()
+    {
+        return inputBox.getVisibility() == View.VISIBLE;
+    }
+
+    // Thanks http://stackoverflow.com/a/35720930/3455743
+    public void rotateFabForward() {
+        ViewCompat.animate(floatingActionButton)
+                .rotation(135.0F)
+                .withLayer()
+                .setDuration(500L)
+                .setInterpolator(new OvershootInterpolator(1.0F))
+                .start();
+    }
+
+    public void rotateFabBackward() {
+        ViewCompat.animate(floatingActionButton)
+                .rotation(0.0F)
+                .withLayer()
+                .setDuration(500L)
+                .setInterpolator(new OvershootInterpolator(1.0F))
+                .start();
+    }
+
+    @OnClick(R.id.fab_add)
+    public void onClick() {
+        if (!isInputVisible()) {
+            rotateFabForward();
+            inputBox.setVisibility(View.VISIBLE);
+            submitButton.setVisibility(View.GONE);
+            clearText.setVisibility(View.GONE);
+            inputBox.animate().alpha(1.0f).setDuration(300);
+
+
+        } else {
+            rotateFabBackward();
+
+            inputBox.setVisibility(View.GONE);
+            inputBox.animate().alpha(0.0f).setDuration(300);
+        }
+    }
+        @OnClick(R.id.cleartext)
+                public void OnClick()
+        {
+            inputField.setText(null);
+        }
+
+        @OnClick(R.id.submit)
+        public void submit()
+        {
+
+            addNewUrl();
+        }
+    @OnTextChanged(R.id.url_input)
+    public void onTextChanged(CharSequence s, int start, int before,
+                              int count)
+    {
+        if(s != null && !s.toString().isEmpty())
+        {
+
+            submitButton.setVisibility(View.VISIBLE);
+            clearText.setVisibility(View.VISIBLE);
+
+        }
+        else
+        {
+            submitButton.setVisibility(View.GONE);
+            clearText.setVisibility(View.GONE);
+        }
     }
 
 
-    @OnClick(R.id.fab_add)
-    public void onClick()
-    {
-        addNewUrl();
+    private BroadcastReceiver syncBroadcastReceiver = new BroadcastReceiver() {
+        @Override public void onReceive(Context context, Intent intent) {
+
+
+            swipeRefreshLayout.setRefreshing(false);
+
+            if(sb != null) {
+                sb.dismiss();
+
+                sb.setText(R.string.sync_finished).show();
+            }
+        }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(syncBroadcastReceiver,syncIntentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        unregisterReceiver(syncBroadcastReceiver);
+        super.onPause();
     }
 }
 

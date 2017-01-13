@@ -18,13 +18,13 @@ public interface UrlColumns {
      String SHORT_URL = Constants.COLUMN_SHORT_URL;
     @DataType(DataType.Type.TEXT) @NotNull
      String LONG_URL = Constants.COLUMN_LONG_URL;
-    @DataType(DataType.Type.TEXT) @NotNull
+    @DataType(DataType.Type.TEXT)
      String KIND_URL = Constants.COLUMN_KIND_URL;
     @DataType(DataType.Type.TEXT) @NotNull
      String CREATED_URL = Constants.COLUMN_CREATED_DATE_URL;
-    @DataType(DataType.Type.TEXT) @NotNull
+    @DataType(DataType.Type.TEXT)
      String STATUS_URL = Constants.COLUMN_STATUS_URL;
-    @DataType(DataType.Type.TEXT) @NotNull
+    @DataType(DataType.Type.TEXT)
      String ANALYTICS_URL = Constants.COLUMN_ANALYTICS_URL;
     @DataType(DataType.Type.INTEGER) @NotNull @DefaultValue("0")
     String FAVOURITES = Constants.COLUMN_FAVOURITE;

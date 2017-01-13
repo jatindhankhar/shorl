@@ -78,6 +78,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         signInButton = (SignInButton) findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_WIDE);
 
+
+
     }
 
     @Override
@@ -122,7 +124,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             new GetToken(this,acct.getAccount(),Constants.URL_SHORTNER_SCOPE,this).execute();
         } else {
             // Signed out, show unauthenticated UI.
-            //updateUI(false);
+            updateUI(false);
         }
     }
 
@@ -161,8 +163,13 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         Utils.setLoginSession(mContext,mAccountName,mAccountEmail);
         //Log.d(TAG,"Login Successful, setting the token" + output);
         Utils.setAuthToken(mContext,output);
+        String authtokenType = mAuthTokenType;
+        mAccountManager.addAccountExplicitly(account, "", null);
+        mAccountManager.setAuthToken(account, authtokenType, output);
         //Log.d(TAG,"Saved token is " + Utils.getAuthToken(mContext));
-        startActivity(new Intent(this,MainActivity.class));
+        Intent intent = new Intent(this,MainActivity.class);
+        intent.putExtra(Constants.ARG_IS_ADDING_NEW_ACCOUNT,true);
+        startActivity(intent);
 
     }
 

@@ -7,6 +7,7 @@ import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SyncResult;
 import android.os.Bundle;
 import android.util.Log;
@@ -100,6 +101,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 Log.d(TAG,"Failed to sync");
             }
         });
-
+        // Notify that sync is done
+        getContext().sendBroadcast(new Intent(Constants.ACTION_SYNC_FINISHED));
     }
 }
