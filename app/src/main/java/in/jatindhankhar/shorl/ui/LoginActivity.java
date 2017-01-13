@@ -153,14 +153,15 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             String authtokenType = mAuthTokenType;
             mAccountManager.addAccountExplicitly(account, "", null);
             mAccountManager.setAuthToken(account, authtokenType, output);
+
         } else {
             // Just reset the token
             mAccountManager.setAuthToken(account,mAuthTokenType,output);
         }
         Utils.setLoginSession(mContext,mAccountName,mAccountEmail);
-        Log.d(TAG,"Login Successful, setting the token" + output);
+        //Log.d(TAG,"Login Successful, setting the token" + output);
         Utils.setAuthToken(mContext,output);
-        Log.d(TAG,"Saved token is " + Utils.getAuthToken(mContext));
+        //Log.d(TAG,"Saved token is " + Utils.getAuthToken(mContext));
         startActivity(new Intent(this,MainActivity.class));
 
     }

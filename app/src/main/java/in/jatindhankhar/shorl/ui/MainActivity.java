@@ -205,11 +205,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             invokeLogin();
         }
         Account targetAccount = null;
-        for (Account account : AccountManager.get(getBaseContext()).getAccountsByType("com.google")) {
-            if (account.name.equals(Utils.getLoginEmail(getBaseContext()))) {
+        for (Account account : AccountManager.get(getBaseContext()).getAccountsByType(Constants.PACKAGE_NAME)) {
+            if (account.name.equals(Utils.getLoginName(getBaseContext()))) {
                 targetAccount = account;
                 break;
             }
+
         }
 
         if(targetAccount != null)
