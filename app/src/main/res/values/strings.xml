@@ -8,4 +8,5 @@
     <string name="default_short_url">goo.gl/eefs4</string>
     <string name="default_long_url">https://www.google.com/</string>
     <string name="no_data_available">No data available</string>
+    <string name="user_input_hint">Enter your Url here</string>
 </resources>

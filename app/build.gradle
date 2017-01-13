@@ -60,6 +60,10 @@ dependencies {
     // For Pie-Charts and stuff
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.1'
 
+    // For Materail Dialogs for capturing input
+
+
+
 
 
 

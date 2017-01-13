@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
@@ -33,6 +34,7 @@ import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import in.jatindhankhar.shorl.R;
 import in.jatindhankhar.shorl.database.UrlProvider;
 import in.jatindhankhar.shorl.model.NewUrl;
@@ -56,7 +58,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     MaterialSearchView searchView;
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout swipeRefreshLayout;
-
+    @BindView(R.id.fab_add)
+    FloatingActionButton floatingActionButton;
 
     private AccountManager mAccountManager;
     private ListAdapter mListAdpater;
@@ -229,9 +232,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
     }
 
-    private  void invokeLogin()
+    private void invokeLogin()
     {
         startActivity(new Intent(this, LoginActivity.class));
+    }
+
+    private void addNewUrl()
+    {
+        Toast.makeText(this, "Damn I was clicked!", Toast.LENGTH_SHORT).show();
+    }
+
+
+    @OnClick(R.id.fab_add)
+    public void onClick()
+    {
+        addNewUrl();
     }
 }
 
