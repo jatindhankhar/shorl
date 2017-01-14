@@ -87,11 +87,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     AppCompatEditText inputField;
     @BindView(R.id.submit)
     ImageView submitButton;
+    @BindView(R.id.empty_error_layout)
+    View emptyErrorLayout;
 
     private AccountManager mAccountManager;
     private ListAdapter mListAdpater;
     private GooglClient googlClient;
     private ContentObserver mContentObserver;
+    private RecyclerView.AdapterDataObserver dataObserver;
     private Snackbar sb;
 
     @Override
@@ -115,7 +118,26 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         recyclerview.setHasFixedSize(true);
         recyclerview.setLayoutManager(new LinearLayoutManager(this));
         mListAdpater = new ListAdapter(mContext, null);
+        dataObserver = new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                setEmptyErrorLayout(mListAdpater.getItemCount() == 0);
 
+            }
+
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                setEmptyErrorLayout(itemCount == 0);
+            }
+
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                super.onItemRangeRemoved(positionStart, itemCount);
+                setEmptyErrorLayout(itemCount == 0);
+            }
+        };
         // Thanks to http://stackoverflow.com/a/25958900/3455743 it doesn't overrides onTouch Events of subviews :D
         mListAdpater.SetOnItemClickListener(new ListAdapter.OnItemClickListener() {
             @Override
@@ -131,15 +153,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
 
-        recyclerview.setAdapter(mListAdpater);
 
+        recyclerview.setAdapter(mListAdpater);
+        mListAdpater.registerAdapterDataObserver(dataObserver);
         googlClient = ServiceGenerator.createService(GooglClient.class, Utils.getAuthToken(mContext));
 
-        if(mListAdpater.getCursor() == null || mListAdpater.getCursor().getCount() == 0 )
-        {
-            recyclerview.setVisibility(View.GONE);
 
-        }
         getSupportLoaderManager().initLoader(LOADER_ID, null, MainActivity.this);
 
 
@@ -187,6 +206,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 }).setActionTextColor(Color.YELLOW);
             }
         });
+
+
+
     }
 
     @Override
@@ -201,6 +223,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(this, UrlProvider.Urls.CONTENT_URI, null, null, null, null);
+
     }
 
     @Override
@@ -387,12 +410,29 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onResume() {
         super.onResume();
         registerReceiver(syncBroadcastReceiver,syncIntentFilter);
+        if(mListAdpater != null)
+            mListAdpater.registerAdapterDataObserver(dataObserver);
     }
 
     @Override
     protected void onPause() {
         unregisterReceiver(syncBroadcastReceiver);
+        if(mListAdpater != null)
+            mListAdpater.unregisterAdapterDataObserver(dataObserver);
         super.onPause();
+    }
+
+    private void setEmptyErrorLayout(boolean empty)
+    {   if(empty)
+        {
+            recyclerview.setVisibility(View.GONE);
+            emptyErrorLayout.setVisibility(View.VISIBLE);
+        }
+        else
+    {
+        recyclerview.setVisibility(View.VISIBLE);
+        emptyErrorLayout.setVisibility(View.GONE);
+    }
     }
 }
 
