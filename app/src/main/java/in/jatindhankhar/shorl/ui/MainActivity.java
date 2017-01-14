@@ -416,8 +416,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onPause() {
         unregisterReceiver(syncBroadcastReceiver);
-        if(mListAdpater != null)
-            mListAdpater.unregisterAdapterDataObserver(dataObserver);
         super.onPause();
     }
 

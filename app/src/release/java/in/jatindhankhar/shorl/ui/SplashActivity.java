@@ -1,18 +1,13 @@
 package in.jatindhankhar.shorl.ui;
 
-import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-
-import com.facebook.stetho.Stetho;
-
 import in.jatindhankhar.shorl.utils.Constants;
 import in.jatindhankhar.shorl.utils.Utils;
 
-import static android.R.attr.accountType;
+
 
 
 public class SplashActivity extends AppCompatActivity {

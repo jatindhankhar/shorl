@@ -49,6 +49,7 @@
             android:src="@drawable/ic_check_circle"
             android:id="@+id/submit"
             android:visibility="gone"
+            android:contentDescription="@string/submit"
             />
 
     </LinearLayout>

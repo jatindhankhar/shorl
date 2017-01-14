@@ -12,7 +12,9 @@
     <View
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="@drawable/trending" />
+        android:background="@drawable/trending"
+        android:contentDescription="@string/click_counts"
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -21,5 +23,5 @@
         android:layout_gravity="center_vertical"
         android:layout_margin="5dp"
         android:id="@+id/click_count"
-        android:text="4 Clicks" />
+        android:text="@string/default_click_count" />
 </LinearLayout>

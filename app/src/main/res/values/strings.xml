@@ -13,4 +13,13 @@
     <string name="new_url_create_success">"New url added "</string>
     <string name="sync_finished">Sync Finished</string>
     <string name="empty_data_message">It\'s quite lonely here. Create a short url :)</string>
+    <string name="description_url_clicks">Pie Chart for the url clicks</string>
+    <string name="description_empty_pie_chart">Empty Pie Chart</string>
+    <string name="description_add_new_url">Add new url</string>
+    <string name="shorl_logo">Shorl Logo</string>
+    <string name="share_url">Share Url</string>
+    <string name="default_click_count">4 Clicks</string>
+    <string name="click_counts">Click Counts</string>
+    <string name="created_on">Created On</string>
+    <string name="submit">Submit</string>
 </resources>

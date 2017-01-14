@@ -53,5 +53,6 @@
         app:fabSize="normal"
         app:layout_anchorGravity="bottom|right|end"
         app:layout_behavior=".ui.custom.FABScrollBehavior"
+        android:contentDescription="@string/description_add_new_url"
         />
 </android.support.design.widget.CoordinatorLayout>
