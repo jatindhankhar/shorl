@@ -410,8 +410,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onResume() {
         super.onResume();
         registerReceiver(syncBroadcastReceiver,syncIntentFilter);
-        if(mListAdpater != null)
-            mListAdpater.registerAdapterDataObserver(dataObserver);
+
     }
 
     @Override
