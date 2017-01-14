@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.io.IOException;
 
+import in.jatindhankhar.shorl.BuildConfig;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -34,7 +35,7 @@ public class ServiceGenerator {
 
     public static <S> S createService(Class<S> serviceClass, final String accessToken) {
 
-        Log.d("Yolopad",accessToken);
+
         if(accessToken != null)
         {
             httpClient.addInterceptor(new Interceptor() {
@@ -47,10 +48,14 @@ public class ServiceGenerator {
                 }
             });
         }
-       //httpClient.addNetworkInterceptor(new StethoInterceptor());
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        httpClient.addInterceptor(interceptor);
+
+        // Enable logging for DEBUG purposes
+        if(BuildConfig.DEBUG) {
+            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            httpClient.addInterceptor(interceptor);
+
+        }
         httpClient.authenticator(new TokenAuthenticator(mContext));
 
 
