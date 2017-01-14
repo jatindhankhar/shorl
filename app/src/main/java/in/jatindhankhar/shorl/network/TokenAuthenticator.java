@@ -37,6 +37,8 @@ public class TokenAuthenticator implements Authenticator {
         else
         {
             try {
+                if(mContext == null)
+                    Log.d(TAG,"Context is null");
                 String token = GoogleAuthUtil.getToken(mContext, Utils.getLoginEmail(mContext), Constants.URL_SHORTNER_SCOPE);
                 Log.d(TAG,"New token is " + token);
                 Utils.setAuthToken(mContext,token);

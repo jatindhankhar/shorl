@@ -10,6 +10,8 @@ import android.support.annotation.NonNull;
 import android.text.format.DateUtils;
 import android.util.Log;
 
+import com.google.firebase.crash.FirebaseCrash;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -21,6 +23,8 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import in.jatindhankhar.shorl.ui.LoginActivity;
+
+import static in.jatindhankhar.shorl.service.SyncService.TAG;
 
 /**
  * Created by jatin on 12/23/16.
@@ -112,7 +116,9 @@ public final class Utils {
             fromdate = sdf.parse(createdDate);
         } catch (ParseException e) {
             e.printStackTrace();
-            return null;
+            FirebaseCrash.logcat(Log.ERROR, TAG, "UnParsable Date");
+            FirebaseCrash.report(e);
+            return " ";
         }
         long then;
         then = fromdate.getTime();

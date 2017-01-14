@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 
 import java.text.DateFormat;
@@ -40,7 +41,7 @@ import in.jatindhankhar.shorl.utils.Utils;
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
 
-
+    private static final String TAG = ListAdapter.class.getSimpleName();
     private Context mContext;
     private Cursor mCursor;
     private Gson gson;
@@ -67,13 +68,21 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
         String shortUrl = Utils.getGooglShortUrl(mCursor.getString(mCursor.getColumnIndex(Constants.COLUMN_SHORT_URL)));
         holder.shortUrl.setText(shortUrl);
-
+        String clickcount;
         holder.longUrl.setText(mCursor.getString(mCursor.getColumnIndex(Constants.COLUMN_LONG_URL)));
-        String clickcount = gson.fromJson(mCursor.getString(mCursor.getColumnIndex(Constants.COLUMN_ANALYTICS_URL)),Analytics.class).getAllTime().getShortUrlClicks();
+        try {
+             clickcount = gson.fromJson(mCursor.getString(mCursor.getColumnIndex(Constants.COLUMN_ANALYTICS_URL)), Analytics.class).getAllTime().getShortUrlClicks();
+        }
+        catch (NullPointerException ex)
+        {
+            clickcount = "0";
+            FirebaseCrash.logcat(Log.ERROR, TAG, "NPE caught while calculating click counts");
+            FirebaseCrash.report(ex);
+        }
         String createdDate = mCursor.getString(mCursor.getColumnIndex(Constants.COLUMN_CREATED_DATE_URL));
         holder.timeagoLayout.setTargetDate(createdDate);
         holder.clickCount.setText(clickcount + " Clicks ");
-        Log.d("Yolopad", "Custom date is " + Utils.getRelativeTime(createdDate));
+
 
 
     }

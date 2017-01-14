@@ -4,15 +4,19 @@ import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,6 +29,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.LinearLayoutManager;
@@ -42,7 +47,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.crash.FirebaseCrash;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
+
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -292,30 +302,61 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         String userUrl = inputField.getText().toString();
         NewUrl newUrl = new NewUrl();
         newUrl.setLongUrl(userUrl);
+        final ProgressDialog progressDialog = createProgressDialog();
         googlClient.createUrl(newUrl).enqueue(new Callback<HistoryItem>() {
             @Override
             public void onResponse(Call<HistoryItem> call, Response<HistoryItem> response) {
                 if (response.isSuccessful()) {
                     HistoryItem historyItem = response.body();
+                    final Gson gson = new GsonBuilder().create();
+                    final String shortUrl = historyItem.getId();
+                    final ContentValues cv = new ContentValues();
+                    // We need to make two calls to API because first API doesn't return all the details and some details are required -_-
+                    // Retrieve detail Analytics
+                    googlClient.processAnalytics(shortUrl,"FULL").enqueue(new Callback<ExpandUrlResponse>() {
+                        @Override
+                        public void onResponse(Call<ExpandUrlResponse> call, Response<ExpandUrlResponse> response) {
+                            if(response.isSuccessful())
+                            {   ExpandUrlResponse ex = response.body();
 
-                    String shortUrl = historyItem.getId();
-                    ContentValues cv = new ContentValues();
-                    cv.put(Constants.COLUMN_STATUS_URL, historyItem.getStatus());
-                    cv.put(Constants.COLUMN_SHORT_URL, historyItem.getId());
-                    cv.put(Constants.COLUMN_KIND_URL, historyItem.getKind());
-                    cv.put(Constants.COLUMN_LONG_URL, historyItem.getLongUrl());
-                    cv.put(Constants.COLUMN_CREATED_DATE_URL, Utils.getISO8601StringForCurrentDate());
-                    cv.put(Constants.COLUMN_ANALYTICS_URL, "{}");
-                    getContentResolver().insert(UrlProvider.Urls.CONTENT_URI, cv);
+                                cv.put(Constants.COLUMN_STATUS_URL,ex.getStatus());
+                                cv.put(Constants.COLUMN_SHORT_URL,ex.getId());
+                                cv.put(Constants.COLUMN_KIND_URL,ex.getKind());
+                                cv.put(Constants.COLUMN_LONG_URL,ex.getLongUrl());
+                                cv.put(Constants.COLUMN_CREATED_DATE_URL,ex.getCreated());
+                                cv.put(Constants.COLUMN_ANALYTICS_URL,gson.toJson(ex.getAnalytics()));
+                                getContentResolver().insert(UrlProvider.Urls.CONTENT_URI, cv);
+                                FirebaseCrash.log("Added Short Url");
+                                progressDialog.dismiss();
+                                createAlertDialog(getResources().getString(R.string.new_url_create_success));
+                                mListAdpater.notifyDataSetChanged();
+
+                            }
+
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<ExpandUrlResponse> call, Throwable t) {
+                            progressDialog.dismiss();
+                            createAlertDialog(getResources().getString(R.string.new_url_creation_error));
+                        }
+                    });
+
+                    // Clear content value to avoid leak
                     cv.clear();
-                    Toast.makeText(MainActivity.this, R.string.new_url_create_success, Toast.LENGTH_SHORT).show();
-
+                }
+                else
+                {
+                    progressDialog.dismiss();
+                    createAlertDialog(getResources().getString(R.string.new_url_creation_error));
                 }
             }
 
             @Override
             public void onFailure(Call<HistoryItem> call, Throwable t) {
-                Toast.makeText(MainActivity.this, R.string.new_url_creation_error, Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
+                createAlertDialog(getResources().getString(R.string.new_url_creation_error));
             }
         });
     }
@@ -430,6 +471,33 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         recyclerview.setVisibility(View.VISIBLE);
         emptyErrorLayout.setVisibility(View.GONE);
     }
+    }
+
+    // Thanks http://stackoverflow.com/a/28627878/3455743
+    private ProgressDialog createProgressDialog()
+    {
+        ProgressDialog dialog = new ProgressDialog(this);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setMessage("Creating New Url. Please wait");
+        dialog.setIndeterminate(true);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+        return dialog;
+
+    }
+
+    private void createAlertDialog(String message)
+    {
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setTitle(message)
+                .setIcon(R.drawable.ic_error)
+                .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).show();
+
     }
 }
 
