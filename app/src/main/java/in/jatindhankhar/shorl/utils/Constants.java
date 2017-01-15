@@ -6,10 +6,9 @@ import in.jatindhankhar.shorl.BuildConfig;
  * Created by jatin on 12/23/16.
  */
 
-public final  class Constants {
+public final class Constants {
 
 
-    private Constants() { } // To avoid Instantion
     public static final String PREF_FILE = "ShorlPref"; // TODO - Set name programmatically
     public static final String IS_LOGGED_IN = "IS_LOGGED_IN";
     public static final String ACCOUNT_NAME = "ACCOUNT_NAME";
@@ -40,4 +39,6 @@ public final  class Constants {
     public final static String ARG_NEW_USER = "arg_new_user";
     public final static int DATABASE_VERSION = 3;
     public static final String ACTION_SYNC_FINISHED = PACKAGE_NAME + "SYNC_FINISHED";
+    private Constants() {
+    } // To avoid Instantion
 }

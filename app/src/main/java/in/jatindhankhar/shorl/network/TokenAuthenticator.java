@@ -21,29 +21,27 @@ import okhttp3.Route;
 
 public class TokenAuthenticator implements Authenticator {
 
-    private Context mContext;
     private static String TAG = TokenAuthenticator.class.getSimpleName();
+    private Context mContext;
 
-    public TokenAuthenticator(Context context)
-    {
+    public TokenAuthenticator(Context context) {
         this.mContext = context;
     }
+
     @Override
     public Request authenticate(Route route, Response response) throws IOException {
-        Log.d(TAG,"Re-authenticating requests");
+        Log.d(TAG, "Re-authenticating requests");
         if (responseCount(response) >= 3) {
             return null; // If we've failed 3 times, give up. - in real life, never give up!!
-        }
-        else
-        {
+        } else {
             try {
-                if(mContext == null)
-                    Log.d(TAG,"Context is null");
+                if (mContext == null)
+                    Log.d(TAG, "Context is null");
                 String token = GoogleAuthUtil.getToken(mContext, Utils.getLoginEmail(mContext), Constants.URL_SHORTNER_SCOPE);
-                Log.d(TAG,"New token is " + token);
-                Utils.setAuthToken(mContext,token);
+                Log.d(TAG, "New token is " + token);
+                Utils.setAuthToken(mContext, token);
                 return response.request().newBuilder()
-                        .header("Authorization","Bearer " + Utils.getAuthToken(mContext) )
+                        .header("Authorization", "Bearer " + Utils.getAuthToken(mContext))
                         .build();
             } catch (GoogleAuthException e) {
                 e.printStackTrace();
@@ -56,8 +54,6 @@ public class TokenAuthenticator implements Authenticator {
     }
 
 
-
-
     // Thanks http://stackoverflow.com/a/34819354/3455743
     private int responseCount(Response response) {
         int result = 1;
@@ -66,4 +62,4 @@ public class TokenAuthenticator implements Authenticator {
         }
         return result;
     }
-    }
+}

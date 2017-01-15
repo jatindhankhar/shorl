@@ -1,70 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:timeAgoLayout="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/parent_container">
+    android:id="@+id/parent_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
     <!-- A CardView that contains a TextView -->
     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        card_view:cardCornerRadius="4dp"
-        card_view:cardElevation="10dp"
         android:layout_margin="10dp"
-        >
+        card_view:cardCornerRadius="4dp"
+        card_view:cardElevation="10dp">
+
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            >
+            android:padding="10dp">
 
             <TextView
                 android:id="@+id/short_url"
-                tools:text="@string/default_short_url"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:textSize="30sp"
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:paddingBottom="20dp"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                tools:text="@string/default_short_url"
 
                 />
 
             <TextView
+                android:id="@+id/long_url"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/long_url"
-                android:paddingBottom="20dp"
-                tools:text="@string/default_long_url"
-                android:textStyle="italic"
-                android:ellipsize="end"
                 android:layout_below="@+id/short_url"
                 android:autoLink="web"
+                android:ellipsize="end"
+                android:paddingBottom="20dp"
                 android:textColorLink="@android:color/holo_blue_dark"
-                 />
+                android:textStyle="italic"
+                tools:text="@string/default_long_url" />
 
             <RelativeLayout
+                android:id="@+id/icon_layer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/icon_layer"
-                android:layout_below="@+id/long_url"
-                >
+                android:layout_below="@+id/long_url">
 
 
                 <!-- <include layout="@layout/created_layout" /> -->
                 <in.jatindhankhar.shorl.ui.custom.TimeagoLayout
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
                     android:id="@+id/timeagoLayout"
-                    timeAgoLayout:showAgoDefault="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     timeAgoLayout:agoDrawable="@drawable/history_ago"
                     timeAgoLayout:normalDrawable="@drawable/date_cal"
-                    />
+                    timeAgoLayout:showAgoDefault="true" />
 
                 <include layout="@layout/click_layout" />
             </RelativeLayout>

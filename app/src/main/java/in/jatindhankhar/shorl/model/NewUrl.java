@@ -10,14 +10,12 @@ public class NewUrl {
     @SerializedName("longUrl")
     private String longUrl;
 
-    public String getLongUrl()
-    {
+    public String getLongUrl() {
         return longUrl;
     }
 
-    public void setLongUrl(String longUrl)
-    {
-        this.longUrl  = longUrl;
+    public void setLongUrl(String longUrl) {
+        this.longUrl = longUrl;
     }
 }
 

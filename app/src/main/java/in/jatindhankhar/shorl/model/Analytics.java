@@ -3,7 +3,6 @@ package in.jatindhankhar.shorl.model;
 import com.google.gson.annotations.SerializedName;
 
 
-
 /**
  * Created by jatin on 12/29/16.
  */

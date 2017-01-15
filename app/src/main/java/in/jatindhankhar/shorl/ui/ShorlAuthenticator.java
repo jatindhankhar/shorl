@@ -8,8 +8,6 @@ import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Config;
 
 import in.jatindhankhar.shorl.utils.Constants;
 
@@ -35,14 +33,14 @@ public class ShorlAuthenticator extends AbstractAccountAuthenticator {
 
     @Override
     public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType, String[] requiredFeatures, Bundle options) throws NetworkErrorException {
-        final Intent intent = new Intent(mContext,LoginActivity.class);
+        final Intent intent = new Intent(mContext, LoginActivity.class);
         intent.putExtra(Constants.ARG_ACCOUNT_TYPE, accountType);
         intent.putExtra(Constants.ARG_AUTH_TYPE, authTokenType);
         intent.putExtra(Constants.ARG_IS_ADDING_NEW_ACCOUNT, true);
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
-        final  Bundle bundle = new Bundle();
-        bundle.putParcelable(AccountManager.KEY_INTENT,intent);
-        return  bundle;
+        final Bundle bundle = new Bundle();
+        bundle.putParcelable(AccountManager.KEY_INTENT, intent);
+        return bundle;
     }
 
     @Override

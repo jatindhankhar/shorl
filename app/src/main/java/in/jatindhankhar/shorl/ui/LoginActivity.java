@@ -23,8 +23,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import in.jatindhankhar.shorl.R;
-import in.jatindhankhar.shorl.utils.AsyncResponse;
 import in.jatindhankhar.shorl.network.GetToken;
+import in.jatindhankhar.shorl.utils.AsyncResponse;
 import in.jatindhankhar.shorl.utils.Constants;
 import in.jatindhankhar.shorl.utils.Utils;
 
@@ -36,6 +36,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private static final int ACCOUNT_CODE = 1601;
 
     final private Scope URL_SCOPE = new Scope(Constants.URL_API);
+    public String mAccountName;
+    public String mAccountEmail;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.sign_in_button)
@@ -44,9 +46,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private Context mContext;
     private AccountManager mAccountManager;
     private String mAuthTokenType;
-    public String mAccountName;
-    public String mAccountEmail;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,11 +72,10 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         String accountName = getIntent().getStringExtra(Constants.ARG_ACCOUNT_NAME);
         mAuthTokenType = getIntent().getStringExtra(Constants.ARG_AUTH_TYPE);
         if (mAuthTokenType == null)
-             mAuthTokenType ="Full access";
+            mAuthTokenType = "Full access";
         //if(signInButton != null)
         signInButton = (SignInButton) findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_WIDE);
-
 
 
     }
@@ -116,12 +114,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
             if (acct != null) {
-                mAccountName =  acct.getDisplayName();
+                mAccountName = acct.getDisplayName();
                 mAccountEmail = acct.getEmail();
                 //acct.toString();
             }
 
-            new GetToken(this,acct.getAccount(),Constants.URL_SHORTNER_SCOPE,this).execute();
+            new GetToken(this, acct.getAccount(), Constants.URL_SHORTNER_SCOPE, this).execute();
         } else {
             // Signed out, show unauthenticated UI.
             updateUI(false);
@@ -129,21 +127,15 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
     private void updateUI(boolean loginSuccess) {
-        if(loginSuccess)
-        {
-            Utils.setLoginSession(mContext,mAccountName,mAccountEmail);
-            Intent intent = new Intent(mContext,MainActivity.class);
-            intent.putExtra(Constants.ARG_NEW_USER,true);
+        if (loginSuccess) {
+            Utils.setLoginSession(mContext, mAccountName, mAccountEmail);
+            Intent intent = new Intent(mContext, MainActivity.class);
+            intent.putExtra(Constants.ARG_NEW_USER, true);
             startActivity(intent);
-        }
-        else
-        {
+        } else {
             Utils.clearLoginSuccess(mContext);
         }
     }
-
-
-
 
 
     @Override
@@ -158,21 +150,20 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
         } else {
             // Just reset the token
-            mAccountManager.setAuthToken(account,mAuthTokenType,output);
+            mAccountManager.setAuthToken(account, mAuthTokenType, output);
         }
-        Utils.setLoginSession(mContext,mAccountName,mAccountEmail);
+        Utils.setLoginSession(mContext, mAccountName, mAccountEmail);
         //Log.d(TAG,"Login Successful, setting the token" + output);
-        Utils.setAuthToken(mContext,output);
+        Utils.setAuthToken(mContext, output);
         String authtokenType = mAuthTokenType;
         mAccountManager.addAccountExplicitly(account, "", null);
         mAccountManager.setAuthToken(account, authtokenType, output);
         //Log.d(TAG,"Saved token is " + Utils.getAuthToken(mContext));
-        Intent intent = new Intent(this,MainActivity.class);
-        intent.putExtra(Constants.ARG_IS_ADDING_NEW_ACCOUNT,true);
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(Constants.ARG_IS_ADDING_NEW_ACCOUNT, true);
         startActivity(intent);
 
     }
-
 
 
 }

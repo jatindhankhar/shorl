@@ -5,9 +5,9 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
-* Created by jatin on 12/29/16.
-*/
-public class TimeData{
+ * Created by jatin on 12/29/16.
+ */
+public class TimeData {
     @SerializedName("shortUrlClicks")
     String shortUrlClicks;
 

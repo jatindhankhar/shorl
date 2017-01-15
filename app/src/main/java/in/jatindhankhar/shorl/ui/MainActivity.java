@@ -3,8 +3,6 @@ package in.jatindhankhar.shorl.ui;
 import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.Activity;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -16,9 +14,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.ContentObserver;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -40,19 +36,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
-import android.webkit.URLUtil;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
-
-import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -106,6 +97,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private ContentObserver mContentObserver;
     private RecyclerView.AdapterDataObserver dataObserver;
     private Snackbar sb;
+    private BroadcastReceiver syncBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+
+            swipeRefreshLayout.setRefreshing(false);
+
+            if (sb != null) {
+                sb.dismiss();
+
+                sb.setText(R.string.sync_finished).show();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,8 +122,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (!Utils.isLoggedIn(mContext)) {
             invokeLogin();
         }
-        if(getIntent().getBooleanExtra(Constants.ARG_IS_ADDING_NEW_ACCOUNT,false))
-        {
+        if (getIntent().getBooleanExtra(Constants.ARG_IS_ADDING_NEW_ACCOUNT, false)) {
             swipeRefreshLayout.setRefreshing(true);
             requestSync();
         }
@@ -152,13 +156,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mListAdpater.SetOnItemClickListener(new ListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent = new Intent(MainActivity.this,DetailActivity.class);
-                Cursor cursor =  mListAdpater.getCursor();
+                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                Cursor cursor = mListAdpater.getCursor();
                 cursor.moveToPosition(position);
-                intent.putExtra(Constants.ARG_SHORT_URL,cursor.getString(cursor.getColumnIndex(Constants.COLUMN_SHORT_URL)));
-                intent.putExtra(Constants.ARG_LONG_URL,cursor.getString(cursor.getColumnIndex(Constants.COLUMN_LONG_URL)));
-                intent.putExtra(Constants.ARG_CREATED_DATE,cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CREATED_DATE_URL)));
-                intent.putExtra(Constants.ARG_ANALYTICS_DATA,cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ANALYTICS_URL)));
+                intent.putExtra(Constants.ARG_SHORT_URL, cursor.getString(cursor.getColumnIndex(Constants.COLUMN_SHORT_URL)));
+                intent.putExtra(Constants.ARG_LONG_URL, cursor.getString(cursor.getColumnIndex(Constants.COLUMN_LONG_URL)));
+                intent.putExtra(Constants.ARG_CREATED_DATE, cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CREATED_DATE_URL)));
+                intent.putExtra(Constants.ARG_ANALYTICS_DATA, cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ANALYTICS_URL)));
                 startActivity(intent);
             }
         });
@@ -172,19 +176,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         getSupportLoaderManager().initLoader(LOADER_ID, null, MainActivity.this);
 
 
+        if (!Utils.isConnected(mContext)) {
+            sb = Snackbar.make(coordinatorLayout, R.string.no_internet_message, Snackbar.LENGTH_LONG);
+            sb.setAction(R.string.dismiss_action, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-        if( ! Utils.isConnected(mContext))
-        {
-           sb = Snackbar.make(coordinatorLayout, R.string.no_internet_message,Snackbar.LENGTH_LONG);
-           sb.setAction(R.string.dismiss_action, new View.OnClickListener() {
-               @Override
-               public void onClick(View v) {
-
-               }
-           }).setActionTextColor(Color.YELLOW);
+                }
+            }).setActionTextColor(Color.YELLOW);
 
             // Enable multiline snack bar
-            TextView tv= (TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text);
+            TextView tv = (TextView) sb.getView().findViewById(android.support.design.R.id.snackbar_text);
             tv.setMaxLines(3);
 
 
@@ -192,20 +194,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             swipeRefreshLayout.setEnabled(false);
 
-        }
-
-        else
-        {
+        } else {
             swipeRefreshLayout.setEnabled(true);
         }
-
 
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 requestSync();
-                Snackbar sb = Snackbar.make(coordinatorLayout, R.string.sync_message,Snackbar.LENGTH_LONG);
+                Snackbar sb = Snackbar.make(coordinatorLayout, R.string.sync_message, Snackbar.LENGTH_LONG);
                 sb.show();
                 sb.setAction(R.string.dismiss_action, new View.OnClickListener() {
                     @Override
@@ -216,7 +214,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 }).setActionTextColor(Color.YELLOW);
             }
         });
-
 
 
     }
@@ -246,16 +243,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mListAdpater.swapCursor(null);
     }
 
-
-
-    private void requestSync()
-    {
+    private void requestSync() {
 
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
 
             // Do nothing
-            FirebaseCrash.logcat(Log.ERROR,TAG,"Activity invoked without granting permissions");
+            FirebaseCrash.logcat(Log.ERROR, TAG, "Activity invoked without granting permissions");
         }
         Account targetAccount = null;
         for (Account account : AccountManager.get(getBaseContext()).getAccountsByType(Constants.PACKAGE_NAME)) {
@@ -266,39 +260,33 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         }
 
-        if(targetAccount != null)
-        {
+        if (targetAccount != null) {
             final Account finalTargetAccount = targetAccount;
-           Runnable syncThread =  new Runnable() {
+            Runnable syncThread = new Runnable() {
 
                 @Override
                 public void run() {
-                    Log.d(TAG,"Requesting immediate sync");
+                    Log.d(TAG, "Requesting immediate sync");
                     Bundle settingsBundle = new Bundle();
                     settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-                    settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL,true);
-                    settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED,true);
-                    ContentResolver.requestSync(finalTargetAccount,UrlProvider.AUTHORITY,settingsBundle);
+                    settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+                    settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+                    ContentResolver.requestSync(finalTargetAccount, UrlProvider.AUTHORITY, settingsBundle);
                 }
             };
 
             syncThread.run();
 
-        }
-
-        else
-        {
+        } else {
             invokeLogin();
         }
     }
 
-    private void invokeLogin()
-    {
+    private void invokeLogin() {
         startActivity(new Intent(this, LoginActivity.class));
     }
 
-    private void addNewUrl()
-    {
+    private void addNewUrl() {
         String userUrl = inputField.getText().toString();
         NewUrl newUrl = new NewUrl();
         newUrl.setLongUrl(userUrl);
@@ -313,18 +301,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     final ContentValues cv = new ContentValues();
                     // We need to make two calls to API because first API doesn't return all the details and some details are required -_-
                     // Retrieve detail Analytics
-                    googlClient.processAnalytics(shortUrl,"FULL").enqueue(new Callback<ExpandUrlResponse>() {
+                    googlClient.processAnalytics(shortUrl, "FULL").enqueue(new Callback<ExpandUrlResponse>() {
                         @Override
                         public void onResponse(Call<ExpandUrlResponse> call, Response<ExpandUrlResponse> response) {
-                            if(response.isSuccessful())
-                            {   ExpandUrlResponse ex = response.body();
+                            if (response.isSuccessful()) {
+                                ExpandUrlResponse ex = response.body();
 
-                                cv.put(Constants.COLUMN_STATUS_URL,ex.getStatus());
-                                cv.put(Constants.COLUMN_SHORT_URL,ex.getId());
-                                cv.put(Constants.COLUMN_KIND_URL,ex.getKind());
-                                cv.put(Constants.COLUMN_LONG_URL,ex.getLongUrl());
-                                cv.put(Constants.COLUMN_CREATED_DATE_URL,ex.getCreated());
-                                cv.put(Constants.COLUMN_ANALYTICS_URL,gson.toJson(ex.getAnalytics()));
+                                cv.put(Constants.COLUMN_STATUS_URL, ex.getStatus());
+                                cv.put(Constants.COLUMN_SHORT_URL, ex.getId());
+                                cv.put(Constants.COLUMN_KIND_URL, ex.getKind());
+                                cv.put(Constants.COLUMN_LONG_URL, ex.getLongUrl());
+                                cv.put(Constants.COLUMN_CREATED_DATE_URL, ex.getCreated());
+                                cv.put(Constants.COLUMN_ANALYTICS_URL, gson.toJson(ex.getAnalytics()));
                                 getContentResolver().insert(UrlProvider.Urls.CONTENT_URI, cv);
                                 FirebaseCrash.log("Added Short Url");
                                 progressDialog.dismiss();
@@ -345,9 +333,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                     // Clear content value to avoid leak
                     cv.clear();
-                }
-                else
-                {
+                } else {
                     progressDialog.dismiss();
                     createAlertDialog(getResources().getString(R.string.new_url_creation_error));
                 }
@@ -361,8 +347,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         });
     }
 
-    private boolean isInputVisible()
-    {
+    private boolean isInputVisible() {
         return inputBox.getVisibility() == View.VISIBLE;
     }
 
@@ -402,55 +387,36 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             inputBox.animate().alpha(0.0f).setDuration(300);
         }
     }
-        @OnClick(R.id.cleartext)
-                public void OnClick()
-        {
-            inputField.setText(null);
-        }
 
-        @OnClick(R.id.submit)
-        public void submit()
-        {
+    @OnClick(R.id.cleartext)
+    public void OnClick() {
+        inputField.setText(null);
+    }
 
-            addNewUrl();
-        }
+    @OnClick(R.id.submit)
+    public void submit() {
+
+        addNewUrl();
+    }
+
     @OnTextChanged(R.id.url_input)
     public void onTextChanged(CharSequence s, int start, int before,
-                              int count)
-    {
-        if(s != null && !s.toString().isEmpty())
-        {
+                              int count) {
+        if (s != null && !s.toString().isEmpty()) {
 
             submitButton.setVisibility(View.VISIBLE);
             clearText.setVisibility(View.VISIBLE);
 
-        }
-        else
-        {
+        } else {
             submitButton.setVisibility(View.GONE);
             clearText.setVisibility(View.GONE);
         }
     }
 
-
-    private BroadcastReceiver syncBroadcastReceiver = new BroadcastReceiver() {
-        @Override public void onReceive(Context context, Intent intent) {
-
-
-            swipeRefreshLayout.setRefreshing(false);
-
-            if(sb != null) {
-                sb.dismiss();
-
-                sb.setText(R.string.sync_finished).show();
-            }
-        }
-    };
-
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(syncBroadcastReceiver,syncIntentFilter);
+        registerReceiver(syncBroadcastReceiver, syncIntentFilter);
 
     }
 
@@ -460,22 +426,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onPause();
     }
 
-    private void setEmptyErrorLayout(boolean empty)
-    {   if(empty)
-        {
+    private void setEmptyErrorLayout(boolean empty) {
+        if (empty) {
             recyclerview.setVisibility(View.GONE);
             emptyErrorLayout.setVisibility(View.VISIBLE);
+        } else {
+            recyclerview.setVisibility(View.VISIBLE);
+            emptyErrorLayout.setVisibility(View.GONE);
         }
-        else
-    {
-        recyclerview.setVisibility(View.VISIBLE);
-        emptyErrorLayout.setVisibility(View.GONE);
-    }
     }
 
     // Thanks http://stackoverflow.com/a/28627878/3455743
-    private ProgressDialog createProgressDialog()
-    {
+    private ProgressDialog createProgressDialog() {
         ProgressDialog dialog = new ProgressDialog(this);
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         dialog.setMessage(getString(R.string.new_url_waiting_message));
@@ -486,8 +448,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
-    private void createAlertDialog(String message)
-    {
+    private void createAlertDialog(String message) {
         AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setTitle(message)
                 .setIcon(R.drawable.ic_error)

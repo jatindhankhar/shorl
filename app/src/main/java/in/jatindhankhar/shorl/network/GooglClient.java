@@ -1,8 +1,6 @@
 package in.jatindhankhar.shorl.network;
 
 
-import java.util.List;
-
 import in.jatindhankhar.shorl.model.DetailedHistoryResponse;
 import in.jatindhankhar.shorl.model.ExpandUrlResponse;
 import in.jatindhankhar.shorl.model.HistoryItem;
@@ -29,10 +27,12 @@ public interface GooglClient {
     );
 
 
-    @POST("./") // Endpoint is same as base point
+    @POST("./")
+        // Endpoint is same as base point
     Call<HistoryItem> createUrl(@Body NewUrl newUrl);
 
-    @GET("./") //Endpoint is same as base point
+    @GET("./")
+        //Endpoint is same as base point
     Call<ExpandUrlResponse> processAnalytics(
             @Query("shortUrl") String shortUrl,
             @Query("projection") String projection

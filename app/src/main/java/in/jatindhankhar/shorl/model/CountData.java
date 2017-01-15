@@ -6,11 +6,11 @@ import com.google.gson.annotations.SerializedName;
  * Created by jatin on 12/29/16.
  */
 public class CountData {
-        @SerializedName("count")
-        String count;
+    @SerializedName("count")
+    String count;
 
-        @SerializedName("id")
-        String id;
+    @SerializedName("id")
+    String id;
 
     public String getCount() {
         return count;

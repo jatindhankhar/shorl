@@ -5,7 +5,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 
-
 /**
  * Created by jatin on 12/29/16.
  */
@@ -19,7 +18,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "text not null, " + Constants.COLUMN_KIND_URL +
             ");";
 
-    private static final String DATABASE_DESTORY =  "drop table if exists " + Constants.TABLE_NAME;
+    private static final String DATABASE_DESTORY = "drop table if exists " + Constants.TABLE_NAME;
 
     public DatabaseHelper(Context context) {
         super(context, Constants.DATABASE_NAME, null, Constants.DATABASE_VERSION);

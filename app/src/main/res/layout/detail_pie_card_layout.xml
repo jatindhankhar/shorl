@@ -1,57 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parent_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/parent_container">
+    android:layout_height="wrap_content">
     <!-- A CardView that contains a TextView -->
     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        card_view:cardCornerRadius="4dp"
-        card_view:cardElevation="10dp"
         android:layout_margin="10dp"
-        >
+        card_view:cardCornerRadius="4dp"
+        card_view:cardElevation="10dp">
 
 
-    <com.github.mikephil.charting.charts.PieChart android:layout_height="400dp"
-        android:layout_width="match_parent"
-        android:id="@+id/pie_chart"
-        android:layout_gravity="center"
-        android:contentDescription="@string/description_url_clicks"
-        />
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/pie_chart"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/description_url_clicks" />
 
-       <LinearLayout
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:orientation="vertical"
-           android:id="@+id/error_layout"
-           android:visibility="gone"
-           android:layout_gravity="center"
-           >
+        <LinearLayout
+            android:id="@+id/error_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
 
-           <ImageView
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:src="@drawable/chart_arc"
-               android:layout_gravity="center"
-               android:contentDescription="@string/description_empty_pie_chart"
-               />
-           <TextView
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:text="@string/chart_error"
-               android:textAppearance="?android:textAppearanceLarge"
-               android:textColor="@android:color/darker_gray"
-               />
-       </LinearLayout>
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:contentDescription="@string/description_empty_pie_chart"
+                android:src="@drawable/chart_arc" />
 
-          />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/chart_error"
+                android:textAppearance="?android:textAppearanceLarge"
+                android:textColor="@android:color/darker_gray" />
+        </LinearLayout>
 
-</android.support.v7.widget.CardView>
-    </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            />
+
+    </android.support.v7.widget.CardView>
+</LinearLayout>

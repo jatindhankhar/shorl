@@ -1,7 +1,6 @@
 package in.jatindhankhar.shorl.sync;
 
 import android.accounts.Account;
-import android.app.Activity;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
@@ -18,13 +17,11 @@ import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-import in.jatindhankhar.shorl.database.UrlDatabase;
 import in.jatindhankhar.shorl.database.UrlProvider;
 import in.jatindhankhar.shorl.model.DetailedHistoryResponse;
 import in.jatindhankhar.shorl.model.ExpandUrlResponse;
 import in.jatindhankhar.shorl.network.GooglClient;
 import in.jatindhankhar.shorl.network.ServiceGenerator;
-import in.jatindhankhar.shorl.ui.MainActivity;
 import in.jatindhankhar.shorl.utils.Constants;
 import in.jatindhankhar.shorl.utils.Utils;
 import retrofit2.Call;
@@ -43,7 +40,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     public SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
-        serviceGenerator= new ServiceGenerator(getContext().getApplicationContext());
+        serviceGenerator = new ServiceGenerator(getContext().getApplicationContext());
         mAuthToken = Utils.getAuthToken(context);
         mContentResolver = context.getContentResolver();
 
@@ -51,9 +48,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
-    Log.d(TAG,"We about to start some real stuff");
-       GooglClient googlClient  = ServiceGenerator.createService(GooglClient.class,mAuthToken);
-    Log.d(TAG,"Starting Auth Service");
+        Log.d(TAG, "We about to start some real stuff");
+        GooglClient googlClient = ServiceGenerator.createService(GooglClient.class, mAuthToken);
+        Log.d(TAG, "Starting Auth Service");
         googlClient.processDetaiList("FULL").enqueue(new Callback<DetailedHistoryResponse>() {
             @Override
             public void onResponse(Call<DetailedHistoryResponse> call, Response<DetailedHistoryResponse> response) {
@@ -70,7 +67,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                             cv.put(Constants.COLUMN_SHORT_URL, expandUrlResponse.getId());
                             cv.put(Constants.COLUMN_LONG_URL, expandUrlResponse.getLongUrl());
                             cv.put(Constants.COLUMN_CREATED_DATE_URL, expandUrlResponse.getCreated());
-                            cv.put(Constants.COLUMN_ANALYTICS_URL,gson.toJson(expandUrlResponse.getAnalytics()));
+                            cv.put(Constants.COLUMN_ANALYTICS_URL, gson.toJson(expandUrlResponse.getAnalytics()));
                             cv.put(Constants.COLUMN_STATUS_URL, expandUrlResponse.getStatus());
                             contentValues.add(cv);
                             //cv.clear();
@@ -79,15 +76,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                         }
 
                         // Bulk Insert values
-                        int count  = mContentResolver.query(UrlProvider.Urls.CONTENT_URI, null, null, null, null).getCount();
-                        if ( count > 0 )
-                        {
+                        int count = mContentResolver.query(UrlProvider.Urls.CONTENT_URI, null, null, null, null).getCount();
+                        if (count > 0) {
                             // If not empty clear all rows
                             int res = mContentResolver.delete(UrlProvider.Urls.CONTENT_URI, "1", null);
-                            Log.d(TAG,"Deleted " + res + " rows");
+                            Log.d(TAG, "Deleted " + res + " rows");
                         }
 
-                        if(contentValues.size() > 0) {
+                        if (contentValues.size() > 0) {
                             int res = mContentResolver.bulkInsert(UrlProvider.Urls.CONTENT_URI, contentValues.toArray(new ContentValues[contentValues.size()]));
                             Log.d(TAG, "Inserted " + res + " rows");
                         }
@@ -98,7 +94,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
             @Override
             public void onFailure(Call<DetailedHistoryResponse> call, Throwable t) {
-                Log.d(TAG,"Failed to sync");
+                Log.d(TAG, "Failed to sync");
             }
         });
         // Notify that sync is done

@@ -20,7 +20,7 @@ public class DetailedHistoryResponse {
     private Integer itemsPerPage;
 
     @SerializedName("items")
-    private List<ExpandUrlResponse> historyItems ;
+    private List<ExpandUrlResponse> historyItems;
 
     public String getKind() {
         return kind;

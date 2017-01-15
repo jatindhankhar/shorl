@@ -25,6 +25,6 @@ public class ShorlAuthenticatorService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return  mAuthenticator.getIBinder();
+        return mAuthenticator.getIBinder();
     }
 }

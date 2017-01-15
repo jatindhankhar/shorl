@@ -12,11 +12,12 @@ import in.jatindhankhar.shorl.utils.Constants;
  * Created by jatin on 12/30/16.
  */
 
-@ContentProvider(authority =  UrlProvider.AUTHORITY,database = UrlDatabase.class)
+@ContentProvider(authority = UrlProvider.AUTHORITY, database = UrlDatabase.class)
 public final class UrlProvider {
-    public static final String AUTHORITY = Constants.PACKAGE_NAME + ".database.UrlProvider" ;
+    public static final String AUTHORITY = Constants.PACKAGE_NAME + ".database.UrlProvider";
 
-    @TableEndpoint(table = UrlDatabase.URLS) public static class Urls {
+    @TableEndpoint(table = UrlDatabase.URLS)
+    public static class Urls {
         @ContentUri(
                 path = Constants.TABLE_NAME,
                 type = "vnd.android.cursor.dir/urls",

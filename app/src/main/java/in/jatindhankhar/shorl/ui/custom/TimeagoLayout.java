@@ -1,6 +1,5 @@
 package in.jatindhankhar.shorl.ui.custom;
 
-import android.animation.Animator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -10,11 +9,8 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.miguelcatalan.materialsearchview.utils.AnimationUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,17 +23,17 @@ import in.jatindhankhar.shorl.utils.Utils;
  */
 
 public class TimeagoLayout extends LinearLayout {
-    private boolean  mShowAgo;
-    private Drawable mAgoDrawable;
-    private Drawable mNormalDrawable;
-    private String mTargetDate;
-    private Context mContext;
     @BindView(R.id.complementary_drawable)
     View complementary_drawable;
     @BindView(R.id.date_text)
     TextView dateText;
     @BindView(R.id.parent_layout)
     LinearLayout parentLayout;
+    private boolean mShowAgo;
+    private Drawable mAgoDrawable;
+    private Drawable mNormalDrawable;
+    private String mTargetDate;
+    private Context mContext;
 
     public TimeagoLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -55,7 +51,7 @@ public class TimeagoLayout extends LinearLayout {
 
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.time_ago_layout,this,true);
+        inflater.inflate(R.layout.time_ago_layout, this, true);
         ButterKnife.bind(this);
         setComplementaryDrawable();
         initView();
@@ -64,64 +60,51 @@ public class TimeagoLayout extends LinearLayout {
 
     }
 
-    private void initView()
-    {
+    private void initView() {
         setComplementaryDrawable();
-        if(mTargetDate != null)
-        {setDate();} // Avoid crash
+        if (mTargetDate != null) {
+            setDate();
+        } // Avoid crash
     }
 
-    private void setComplementaryDrawable()
-    {
+    private void setComplementaryDrawable() {
 
-        if(mShowAgo)
-        {
+        if (mShowAgo) {
             complementary_drawable.setBackgroundDrawable(mAgoDrawable);
-        }
-        else
-        {
+        } else {
             complementary_drawable.setBackgroundDrawable(mNormalDrawable);
         }
     }
 
-    private void setDate()
-    {
+    private void setDate() {
 
-        if(mShowAgo)
-        {
+        if (mShowAgo) {
             dateText.setText(Utils.getRelativeTime(mTargetDate));
-        }
-
-        else
-        {
+        } else {
             dateText.setText(Utils.getReadbleDate(mTargetDate));
         }
     }
-    public void setTargetDate(String date)
-    {
+
+    public void setTargetDate(String date) {
         mTargetDate = date;
         setDate();
     }
 
-    public void setAgoDrawable(Drawable drawable)
-    {
+    public void setAgoDrawable(Drawable drawable) {
         mAgoDrawable = drawable;
         setComplementaryDrawable();
     }
 
-    public void setNormalDrawable(Drawable drawable)
-    {
+    public void setNormalDrawable(Drawable drawable) {
         mNormalDrawable = drawable;
         setComplementaryDrawable();
     }
 
-    public void setShowAgo(boolean val)
-    {
+    public void setShowAgo(boolean val) {
         mShowAgo = val;
     }
 
-    private void toggleView()
-    {
+    private void toggleView() {
         mShowAgo = !(mShowAgo); // Toggle the behavior
         // Then call new methods
         initView();
@@ -129,8 +112,7 @@ public class TimeagoLayout extends LinearLayout {
 
     }
 
-    private void animateView()
-    {
+    private void animateView() {
         /*Animation slideInRight = AnimationUtils.loadAnimation(mContext,R.anim.slide_in_right);
         slideInRight.setDuration(500);
         parentLayout.setAnimation(slideInRight);*/
@@ -139,28 +121,32 @@ public class TimeagoLayout extends LinearLayout {
         fadeOut.setInterpolator(new AccelerateInterpolator());
         fadeOut.setDuration(300);
 
-        fadeOut.setAnimationListener(new Animation.AnimationListener()
-        {
-            public void onAnimationEnd(Animation animation)
-            {
-               // parentLayout.setVisibility(View.GONE);
+        fadeOut.setAnimationListener(new Animation.AnimationListener() {
+            public void onAnimationEnd(Animation animation) {
+                // parentLayout.setVisibility(View.GONE);
             }
-            public void onAnimationRepeat(Animation animation) {}
-            public void onAnimationStart(Animation animation) {}
+
+            public void onAnimationRepeat(Animation animation) {
+            }
+
+            public void onAnimationStart(Animation animation) {
+            }
         });
 
         Animation showIn = new AlphaAnimation(0, 1);
         showIn.setInterpolator(new AccelerateInterpolator());
         showIn.setDuration(300);
 
-        showIn.setAnimationListener(new Animation.AnimationListener()
-        {
-            public void onAnimationEnd(Animation animation)
-            {
+        showIn.setAnimationListener(new Animation.AnimationListener() {
+            public void onAnimationEnd(Animation animation) {
                 // parentLayout.setVisibility(View.GONE);
             }
-            public void onAnimationRepeat(Animation animation) {}
-            public void onAnimationStart(Animation animation) {}
+
+            public void onAnimationRepeat(Animation animation) {
+            }
+
+            public void onAnimationStart(Animation animation) {
+            }
         });
 
         parentLayout.startAnimation(fadeOut);

@@ -1,9 +1,7 @@
 package in.jatindhankhar.shorl.ui;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,25 +9,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import in.jatindhankhar.shorl.R;
 import in.jatindhankhar.shorl.model.Analytics;
-import in.jatindhankhar.shorl.model.TimeData;
 import in.jatindhankhar.shorl.ui.custom.TimeagoLayout;
 import in.jatindhankhar.shorl.utils.Constants;
 import in.jatindhankhar.shorl.utils.Utils;
@@ -42,10 +29,10 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
 
     private static final String TAG = ListAdapter.class.getSimpleName();
+    OnItemClickListener mItemClickListener;
     private Context mContext;
     private Cursor mCursor;
     private Gson gson;
-    OnItemClickListener mItemClickListener;
 
     public ListAdapter(Context mContext, Cursor mCursor) {
         this.mContext = mContext;
@@ -71,18 +58,16 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         String clickcount;
         holder.longUrl.setText(mCursor.getString(mCursor.getColumnIndex(Constants.COLUMN_LONG_URL)));
         try {
-             clickcount = gson.fromJson(mCursor.getString(mCursor.getColumnIndex(Constants.COLUMN_ANALYTICS_URL)), Analytics.class).getAllTime().getShortUrlClicks();
-        }
-        catch (NullPointerException ex)
-        {
+            clickcount = gson.fromJson(mCursor.getString(mCursor.getColumnIndex(Constants.COLUMN_ANALYTICS_URL)), Analytics.class).getAllTime().getShortUrlClicks();
+        } catch (NullPointerException ex) {
             clickcount = "0";
             FirebaseCrash.logcat(Log.ERROR, TAG, "NPE caught while calculating click counts");
             FirebaseCrash.report(ex);
         }
         String createdDate = mCursor.getString(mCursor.getColumnIndex(Constants.COLUMN_CREATED_DATE_URL));
         holder.timeagoLayout.setTargetDate(createdDate);
-        holder.clickCount.setText(String.format(mContext.getResources().getString(R.string.click_count),clickcount));;
-
+        holder.clickCount.setText(String.format(mContext.getResources().getString(R.string.click_count), clickcount));
+        ;
 
 
     }
@@ -104,7 +89,19 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         return (mCursor == null) ? 0 : mCursor.getCount();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public void SetOnItemClickListener(final OnItemClickListener mItemClickListener) {
+        this.mItemClickListener = mItemClickListener;
+    }
+
+    public Cursor getCursor() {
+        return mCursor;
+    }
+
+    public interface OnItemClickListener {
+        public void onItemClick(View view, int position);
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @BindView(R.id.card_view)
         CardView cardView;
         @BindView(R.id.short_url)
@@ -131,18 +128,5 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
                 mItemClickListener.onItemClick(v, getPosition());
             }
         }
-    }
-
-    public interface OnItemClickListener {
-        public void onItemClick(View view , int position);
-    }
-
-    public void SetOnItemClickListener(final OnItemClickListener mItemClickListener) {
-        this.mItemClickListener = mItemClickListener;
-    }
-
-    public Cursor getCursor()
-    {
-        return mCursor;
     }
 }

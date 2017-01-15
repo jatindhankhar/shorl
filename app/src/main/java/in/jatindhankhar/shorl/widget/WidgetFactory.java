@@ -20,30 +20,30 @@ public class WidgetFactory implements RemoteViewsService.RemoteViewsFactory {
     private int appWidgetId;
     private Cursor mCursor;
     private String shortUrl;
+
     public WidgetFactory(Context applicationContext, Intent intent) {
-            this.mContext = applicationContext;
-            this.appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
-                    AppWidgetManager.INVALID_APPWIDGET_ID);
+        this.mContext = applicationContext;
+        this.appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
+                AppWidgetManager.INVALID_APPWIDGET_ID);
     }
 
     @Override
     public void onCreate() {
-        mCursor = mContext.getContentResolver().query(in.jatindhankhar.shorl.database.UrlProvider.Urls.CONTENT_URI,null
-                ,null,null,null);
+        mCursor = mContext.getContentResolver().query(in.jatindhankhar.shorl.database.UrlProvider.Urls.CONTENT_URI, null
+                , null, null, null);
     }
 
     @Override
     public void onDataSetChanged() {
-        if(mCursor != null) mCursor.close();
-        mCursor = mContext.getContentResolver().query(in.jatindhankhar.shorl.database.UrlProvider.Urls.CONTENT_URI,null
-        ,null,null,null);
+        if (mCursor != null) mCursor.close();
+        mCursor = mContext.getContentResolver().query(in.jatindhankhar.shorl.database.UrlProvider.Urls.CONTENT_URI, null
+                , null, null, null);
 
     }
 
     @Override
     public void onDestroy() {
-        if(mCursor != null)
-        {
+        if (mCursor != null) {
             mCursor.close();
         }
     }
@@ -55,19 +55,18 @@ public class WidgetFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public RemoteViews getViewAt(int position) {
-        if(mCursor.moveToPosition(position))
-        {
+        if (mCursor.moveToPosition(position)) {
             shortUrl = mCursor.getString(mCursor.getColumnIndex(Constants.COLUMN_SHORT_URL));
         }
 
-        RemoteViews rv = new RemoteViews(mContext.getPackageName(),R.layout.widget_item_layout);
-        rv.setTextViewText(R.id.short_url,shortUrl);
+        RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_item_layout);
+        rv.setTextViewText(R.id.short_url, shortUrl);
         return rv;
     }
 
     @Override
     public RemoteViews getLoadingView() {
-       // return new RemoteViews(mContext.getPackageName(), R.layout.list_item);
+        // return new RemoteViews(mContext.getPackageName(), R.layout.list_item);
         return null;
     }
 

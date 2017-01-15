@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android" >
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/parent_layout"
-    android:orientation="horizontal">
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <View
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:id="@+id/complementary_drawable"
-        android:background="@drawable/date_cal" />
-
-    <TextView
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/parent_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:layout_gravity="center_vertical"
-        android:layout_margin="5dp"
-        android:id='@+id/date_text'
-        />
-</LinearLayout>
-    </merge>
+        android:orientation="horizontal">
+
+        <View
+            android:id="@+id/complementary_drawable"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/date_cal" />
+
+        <TextView
+            android:id='@+id/date_text'
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="5dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+</merge>

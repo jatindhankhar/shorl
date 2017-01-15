@@ -1,8 +1,6 @@
 package in.jatindhankhar.shorl.utils;
 
-import android.accounts.AccountManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -22,8 +20,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import in.jatindhankhar.shorl.ui.LoginActivity;
-
 import static in.jatindhankhar.shorl.service.SyncService.TAG;
 
 /**
@@ -32,67 +28,58 @@ import static in.jatindhankhar.shorl.service.SyncService.TAG;
 
 public final class Utils {
 
-    public static boolean isLoggedIn(Context context)
-    {
+    public static boolean isLoggedIn(Context context) {
 
-        return context.getSharedPreferences(Constants.PREF_FILE,context.MODE_PRIVATE).getBoolean(Constants.IS_LOGGED_IN,false);
+        return context.getSharedPreferences(Constants.PREF_FILE, context.MODE_PRIVATE).getBoolean(Constants.IS_LOGGED_IN, false);
     }
 
-    public static void clearLoginSuccess(Context context)
-    {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.PREF_FILE,context.MODE_PRIVATE);
-        sharedPreferences.edit().putBoolean(Constants.IS_LOGGED_IN,false).apply();
+    public static void clearLoginSuccess(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.PREF_FILE, context.MODE_PRIVATE);
+        sharedPreferences.edit().putBoolean(Constants.IS_LOGGED_IN, false).apply();
         sharedPreferences.edit().remove(Constants.ACCOUNT_NAME).apply();
         sharedPreferences.edit().remove(Constants.AUTH_TOKEN).apply();
         sharedPreferences.edit().remove(Constants.ACCOUNT_EMAIL).apply();
     }
 
-    public static void setLoginSession(Context context,String accountName,String accountEmail)
-    {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.PREF_FILE,context.MODE_PRIVATE);
-        sharedPreferences.edit().putString(Constants.ACCOUNT_NAME,accountName).
-                putBoolean(Constants.IS_LOGGED_IN,true).
-                putString(Constants.ACCOUNT_EMAIL,accountEmail).apply();
+    public static void setLoginSession(Context context, String accountName, String accountEmail) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.PREF_FILE, context.MODE_PRIVATE);
+        sharedPreferences.edit().putString(Constants.ACCOUNT_NAME, accountName).
+                putBoolean(Constants.IS_LOGGED_IN, true).
+                putString(Constants.ACCOUNT_EMAIL, accountEmail).apply();
     }
 
-    public static void setAuthToken(Context context,String authToken)
-    {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.PREF_FILE,context.MODE_PRIVATE);
-        sharedPreferences.edit().putString(Constants.AUTH_TOKEN,authToken).apply();
+    public static void setAuthToken(Context context, String authToken) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.PREF_FILE, context.MODE_PRIVATE);
+        sharedPreferences.edit().putString(Constants.AUTH_TOKEN, authToken).apply();
     }
 
-    public static String getLoginName(Context context)
-    {
-        return context.getSharedPreferences(Constants.PREF_FILE,context.MODE_PRIVATE).getString(Constants.ACCOUNT_NAME,"");
+    public static String getLoginName(Context context) {
+        return context.getSharedPreferences(Constants.PREF_FILE, context.MODE_PRIVATE).getString(Constants.ACCOUNT_NAME, "");
     }
 
-    public static String getLoginEmail(Context context)
-    {
-        return  context.getSharedPreferences(Constants.PREF_FILE,context.MODE_PRIVATE).getString(Constants.ACCOUNT_EMAIL,"");
+    public static String getLoginEmail(Context context) {
+        return context.getSharedPreferences(Constants.PREF_FILE, context.MODE_PRIVATE).getString(Constants.ACCOUNT_EMAIL, "");
     }
 
-    public static String getAuthToken(Context context)
-    {
-        return context.getSharedPreferences(Constants.PREF_FILE,context.MODE_PRIVATE).getString(Constants.AUTH_TOKEN,"");
+    public static String getAuthToken(Context context) {
+        return context.getSharedPreferences(Constants.PREF_FILE, context.MODE_PRIVATE).getString(Constants.AUTH_TOKEN, "");
     }
 
-    public static String getGooglShortUrl(@NonNull String shortUrl)
-    {
-        URL targetUrl= null;
+    public static String getGooglShortUrl(@NonNull String shortUrl) {
+        URL targetUrl = null;
         try {
             targetUrl = new URL(shortUrl);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
 
-        if(targetUrl == null)
+        if (targetUrl == null)
             return null;
         else
             return targetUrl.getHost() + targetUrl.getPath();
     }
 
-    public static String getReadbleDate(@NonNull  String createdDate)
-    {
+    public static String getReadbleDate(@NonNull String createdDate) {
         DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS", Locale.getDefault());
         Date date = null;
         try {
@@ -109,7 +96,7 @@ public final class Utils {
     }
 
     // Thanks to http://stackoverflow.com/a/24339774/3455743
-    public static String getRelativeTime(@NonNull  String createdDate) {
+    public static String getRelativeTime(@NonNull String createdDate) {
         DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS", Locale.getDefault());
         Date fromdate = null;
         try {
@@ -154,14 +141,10 @@ public final class Utils {
                     dateStr.append(minutes).append(" minutes ago");
                 }
             }
-        } else
-
-        if (hours > 24 ) {
+        } else if (hours > 24) {
             dateStr.append(days).append(" days ago");
-        }
-
-        else {
-           return getReadbleDate(createdDate);
+        } else {
+            return getReadbleDate(createdDate);
             // ;
         }
 
@@ -191,7 +174,7 @@ public final class Utils {
             // Check Mobile State First
             state = mobile_info != null && mobile_info.getState() == NetworkInfo.State.CONNECTED;
             // If mobile is connected. Don't check further
-            if(state)
+            if (state)
                 return true;
             else {
                 // If mobile_info is null or not connected. Check Wifi State next
@@ -201,19 +184,16 @@ public final class Utils {
             }
 
 
-        }
-
-        catch (NullPointerException npe)
-        {
-            FirebaseCrash.logcat(Log.ERROR,TAG,"NPE in checking Network State. Unknown state/info");
+        } catch (NullPointerException npe) {
+            FirebaseCrash.logcat(Log.ERROR, TAG, "NPE in checking Network State. Unknown state/info");
             return false;
         }
     }
 
     // Thanks to
     public static String getISO8601StringForCurrentDate() {
-    Date now = new Date();
-    return getISO8601StringForDate(now);
+        Date now = new Date();
+        return getISO8601StringForDate(now);
     }
 
 

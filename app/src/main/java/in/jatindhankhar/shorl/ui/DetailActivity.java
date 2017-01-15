@@ -3,29 +3,21 @@ package in.jatindhankhar.shorl.ui;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.gson.Gson;
 
@@ -46,8 +38,6 @@ import in.jatindhankhar.shorl.model.Analytics;
 import in.jatindhankhar.shorl.ui.custom.TimeagoLayout;
 import in.jatindhankhar.shorl.utils.Constants;
 import in.jatindhankhar.shorl.utils.Utils;
-
-import static android.R.attr.bitmap;
 
 public class DetailActivity extends AppCompatActivity {
     @BindView(R.id.toolbar)
@@ -77,8 +67,9 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        if(toolbar != null)
-        {getSupportActionBar().setDisplayHomeAsUpEnabled(true);}
+        if (toolbar != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("Detail");
         gson = new Gson();
@@ -86,26 +77,23 @@ public class DetailActivity extends AppCompatActivity {
         shortUrl.setText(Utils.getGooglShortUrl(getIntent().getStringExtra(Constants.ARG_SHORT_URL)));
         longUrl.setText(getIntent().getStringExtra(Constants.ARG_LONG_URL));
         timeagoLayout.setTargetDate(getIntent().getStringExtra(Constants.ARG_CREATED_DATE));
-        Analytics analytics = gson.fromJson(getIntent().getStringExtra(Constants.ARG_ANALYTICS_DATA),Analytics.class);
+        Analytics analytics = gson.fromJson(getIntent().getStringExtra(Constants.ARG_ANALYTICS_DATA), Analytics.class);
         String shortClicks = analytics.getAllTime().getShortUrlClicks();
         String longClicks = analytics.getAllTime().getLongUrlClicks();
-        clickCount.setText(String.format(getResources().getString(R.string.click_count),shortClicks));
-        if(shortClicks == null) shortClicks = "0";
+        clickCount.setText(String.format(getResources().getString(R.string.click_count), shortClicks));
+        if (shortClicks == null) shortClicks = "0";
         if (longClicks == null) longClicks = "0";
-        qrcodeImage = QRCode.from(shortUrl.getText().toString()).withSize(250,220).bitmap();
+        qrcodeImage = QRCode.from(shortUrl.getText().toString()).withSize(250, 220).bitmap();
         qrcode.setImageBitmap(qrcodeImage);
 
 
-        setupChart(shortClicks,longClicks);
-
+        setupChart(shortClicks, longClicks);
 
 
     }
 
 
-
-    private void setupChart(String shortClicks,String longClicks)
-    {
+    private void setupChart(String shortClicks, String longClicks) {
         List<PieEntry> entries = new ArrayList<>();
 
         Float short_actual = Float.parseFloat(shortClicks);
@@ -116,17 +104,16 @@ public class DetailActivity extends AppCompatActivity {
         Float long_final_percent = (long_actual / (long_actual + short_actual)) * 100;
 
         if (short_actual != Float.parseFloat("0"))
-            entries.add(new PieEntry(short_final_percent,getString(R.string.short_url_clicks_pie_chart)));
+            entries.add(new PieEntry(short_final_percent, getString(R.string.short_url_clicks_pie_chart)));
         if (long_actual != Float.parseFloat("0"))
-            entries.add(new PieEntry(long_final_percent,getString(R.string.long_url_click_pie_chart)));
+            entries.add(new PieEntry(long_final_percent, getString(R.string.long_url_click_pie_chart)));
         PieDataSet set = new PieDataSet(entries, getString(R.string.url_clikc_count_pie_chart));
         set.setColors(ColorTemplate.MATERIAL_COLORS);
         PieData data = new PieData(set);
         pieChart.setData(data);
         pieChart.invalidate(); // refresh
 
-        if(pieChart.isEmpty())
-        {
+        if (pieChart.isEmpty()) {
             pieChart.setVisibility(View.GONE);
             errorLayout.setVisibility(View.VISIBLE);
 
@@ -134,43 +121,42 @@ public class DetailActivity extends AppCompatActivity {
     }
 
 
-   @OnClick(R.id.fab_share)
-   public void share()
-   {
-       if(qrcodeImage != null)
-       {
-           // http://stackoverflow.com/a/30172247/3455743
-           try {
+    @OnClick(R.id.fab_share)
+    public void share() {
+        if (qrcodeImage != null) {
+            // http://stackoverflow.com/a/30172247/3455743
+            try {
 
-               File cachePath = new File(getBaseContext().getCacheDir(), "images");
-               cachePath.mkdirs(); // don't forget to make the directory
-               FileOutputStream stream = new FileOutputStream(cachePath + "/image.png"); // overwrites this image every time
-               qrcodeImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
-               stream.close();
+                File cachePath = new File(getBaseContext().getCacheDir(), "images");
+                cachePath.mkdirs(); // don't forget to make the directory
+                FileOutputStream stream = new FileOutputStream(cachePath + "/image.png"); // overwrites this image every time
+                qrcodeImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                stream.close();
 
-           } catch (FileNotFoundException e) {
-               e.printStackTrace();
-           } catch (IOException e) {
-               e.printStackTrace();
-           }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-           File imagePath = new File(getBaseContext().getCacheDir(), "images");
-           File newFile = new File(imagePath, "image.png");
-           Uri contentUri = FileProvider.getUriForFile(getBaseContext(), "in.jatindhankhar.shorl.fileprovider", newFile);
+            File imagePath = new File(getBaseContext().getCacheDir(), "images");
+            File newFile = new File(imagePath, "image.png");
+            Uri contentUri = FileProvider.getUriForFile(getBaseContext(), "in.jatindhankhar.shorl.fileprovider", newFile);
 
-           if (contentUri != null) {
+            if (contentUri != null) {
 
-               Intent shareIntent = new Intent();
-               shareIntent.setAction(Intent.ACTION_SEND);
-               shareIntent.putExtra(Intent.EXTRA_TEXT,String.format(getResources().getString(R.string.app_share_messsage), shortUrl.getText()));
-               shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // temp permission for receiving app to read this file
-               shareIntent.setDataAndType(contentUri, getContentResolver().getType(contentUri));
-               shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
-               startActivity(Intent.createChooser(shareIntent, getString(R.string.app_chooser_share)));
+                Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_TEXT, String.format(getResources().getString(R.string.app_share_messsage), shortUrl.getText()));
+                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // temp permission for receiving app to read this file
+                shareIntent.setDataAndType(contentUri, getContentResolver().getType(contentUri));
+                shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+                startActivity(Intent.createChooser(shareIntent, getString(R.string.app_chooser_share)));
 
-           }
-       }
-   }
+            }
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<sync-adapter
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:contentAuthority="in.jatindhankhar.shorl.database.UrlProvider"
+<sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
     android:accountType="in.jatindhankhar.shorl"
-    android:userVisible="true"
-    android:supportsUploading="false"
     android:allowParallelSyncs="false"
-    android:isAlwaysSyncable="true"/>
+    android:contentAuthority="in.jatindhankhar.shorl.database.UrlProvider"
+    android:isAlwaysSyncable="true"
+    android:supportsUploading="false"
+    android:userVisible="true" />

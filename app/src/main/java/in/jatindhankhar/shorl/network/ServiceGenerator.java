@@ -1,7 +1,6 @@
 package in.jatindhankhar.shorl.network;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.io.IOException;
 
@@ -19,38 +18,34 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class ServiceGenerator {
-    private static Context mContext;
-    public ServiceGenerator(Context mContext)
-    {
-        this.mContext = mContext;
-    }
     public static final String API_BASE_URL = "https://www.googleapis.com/urlshortener/v1/url/";
-
-
+    private static Context mContext;
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-
-
     private static Retrofit.Builder builder =
             new Retrofit.Builder().baseUrl(API_BASE_URL).addConverterFactory(GsonConverterFactory.create());
+
+
+    public ServiceGenerator(Context mContext) {
+        this.mContext = mContext;
+    }
 
     public static <S> S createService(Class<S> serviceClass, final String accessToken) {
 
 
-        if(accessToken != null)
-        {
+        if (accessToken != null) {
             httpClient.addInterceptor(new Interceptor() {
                 @Override
                 public Response intercept(Chain chain) throws IOException {
                     Request original = chain.request();
                     // Adding headers
-                    return chain.proceed( original.newBuilder()
-                            .header("Authorization","Bearer " + accessToken.toString()).build());
+                    return chain.proceed(original.newBuilder()
+                            .header("Authorization", "Bearer " + accessToken.toString()).build());
                 }
             });
         }
 
         // Enable logging for DEBUG purposes
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             httpClient.addInterceptor(interceptor);
