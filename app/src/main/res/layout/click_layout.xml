@@ -23,5 +23,5 @@
         android:layout_gravity="center_vertical"
         android:layout_margin="5dp"
         android:id="@+id/click_count"
-        android:text="@string/default_click_count" />
+        tools:text="@string/default_click_count" />
 </LinearLayout>

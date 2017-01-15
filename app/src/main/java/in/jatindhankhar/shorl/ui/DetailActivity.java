@@ -89,7 +89,7 @@ public class DetailActivity extends AppCompatActivity {
         Analytics analytics = gson.fromJson(getIntent().getStringExtra(Constants.ARG_ANALYTICS_DATA),Analytics.class);
         String shortClicks = analytics.getAllTime().getShortUrlClicks();
         String longClicks = analytics.getAllTime().getLongUrlClicks();
-        clickCount.setText(shortClicks + " Clicks");
+        clickCount.setText(String.format(getResources().getString(R.string.click_count),shortClicks));
         if(shortClicks == null) shortClicks = "0";
         if (longClicks == null) longClicks = "0";
         qrcodeImage = QRCode.from(shortUrl.getText().toString()).withSize(250,220).bitmap();
@@ -116,10 +116,10 @@ public class DetailActivity extends AppCompatActivity {
         Float long_final_percent = (long_actual / (long_actual + short_actual)) * 100;
 
         if (short_actual != Float.parseFloat("0"))
-            entries.add(new PieEntry(short_final_percent,"Short Url Clicks"));
+            entries.add(new PieEntry(short_final_percent,getString(R.string.short_url_clicks_pie_chart)));
         if (long_actual != Float.parseFloat("0"))
-            entries.add(new PieEntry(long_final_percent,"Long Url Clicks"));
-        PieDataSet set = new PieDataSet(entries, "Url Click Count");
+            entries.add(new PieEntry(long_final_percent,getString(R.string.long_url_click_pie_chart)));
+        PieDataSet set = new PieDataSet(entries, getString(R.string.url_clikc_count_pie_chart));
         set.setColors(ColorTemplate.MATERIAL_COLORS);
         PieData data = new PieData(set);
         pieChart.setData(data);
@@ -162,11 +162,11 @@ public class DetailActivity extends AppCompatActivity {
 
                Intent shareIntent = new Intent();
                shareIntent.setAction(Intent.ACTION_SEND);
-               shareIntent.putExtra(Intent.EXTRA_TEXT,"Hey check out " + shortUrl.getText() + " QR Code generated via Shorl");
+               shareIntent.putExtra(Intent.EXTRA_TEXT,String.format(getResources().getString(R.string.app_share_messsage), shortUrl.getText()));
                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // temp permission for receiving app to read this file
                shareIntent.setDataAndType(contentUri, getContentResolver().getType(contentUri));
                shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
-               startActivity(Intent.createChooser(shareIntent, "Choose an app"));
+               startActivity(Intent.createChooser(shareIntent, getString(R.string.app_chooser_share)));
 
            }
        }

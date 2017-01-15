@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if( ! Utils.isConnected(mContext))
         {
            sb = Snackbar.make(coordinatorLayout, R.string.no_internet_message,Snackbar.LENGTH_LONG);
-           sb.setAction("Dismiss", new View.OnClickListener() {
+           sb.setAction(R.string.dismiss_action, new View.OnClickListener() {
                @Override
                public void onClick(View v) {
 
@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 requestSync();
                 Snackbar sb = Snackbar.make(coordinatorLayout, R.string.sync_message,Snackbar.LENGTH_LONG);
                 sb.show();
-                sb.setAction("Dismiss", new View.OnClickListener() {
+                sb.setAction(R.string.dismiss_action, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         swipeRefreshLayout.setRefreshing(false);
@@ -255,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
 
             // Do nothing
-            Log.d(TAG,"Fatal error");
+            FirebaseCrash.logcat(Log.ERROR,TAG,"Activity invoked without granting permissions");
         }
         Account targetAccount = null;
         for (Account account : AccountManager.get(getBaseContext()).getAccountsByType(Constants.PACKAGE_NAME)) {
@@ -278,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
                     settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL,true);
                     settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED,true);
-                    ContentResolver.requestSync(finalTargetAccount,"in.jatindhankhar.shorl.database.UrlProvider",settingsBundle);
+                    ContentResolver.requestSync(finalTargetAccount,UrlProvider.AUTHORITY,settingsBundle);
                 }
             };
 
@@ -478,7 +478,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     {
         ProgressDialog dialog = new ProgressDialog(this);
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setMessage("Creating New Url. Please wait");
+        dialog.setMessage(getString(R.string.new_url_waiting_message));
         dialog.setIndeterminate(true);
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();

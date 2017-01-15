@@ -22,4 +22,14 @@
     <string name="click_counts">Click Counts</string>
     <string name="created_on">Created On</string>
     <string name="submit">Submit</string>
+    <string name="app_chooser_share">Choose an app</string>
+    <string name="app_share_messsage">Hey check out %1$s .QR Code generated via Shorl</string>
+    <string name="click_count">%1$s Clicks</string>
+    <string name="url_clikc_count_pie_chart">Url Click Count</string>
+    <string name="long_url_click_pie_chart">Long Url Clicks</string>
+    <string name="short_url_clicks_pie_chart">Short Url Clicks</string>
+    <string name="dismiss_action">Dismiss</string>
+    <string name="new_url_waiting_message">Creating New Url. Please wait</string>
+    <string name="placeholder_short_url">goo.gl/eefs4</string>
+    <string name="placeholder_long_url">https://www.google.com/</string>
 </resources>

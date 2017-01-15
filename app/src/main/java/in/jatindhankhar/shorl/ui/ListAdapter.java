@@ -81,7 +81,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         }
         String createdDate = mCursor.getString(mCursor.getColumnIndex(Constants.COLUMN_CREATED_DATE_URL));
         holder.timeagoLayout.setTargetDate(createdDate);
-        holder.clickCount.setText(clickcount + " Clicks ");
+        holder.clickCount.setText(String.format(mContext.getResources().getString(R.string.click_count),clickcount));;
 
 
 
