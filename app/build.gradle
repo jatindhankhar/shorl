@@ -15,7 +15,7 @@ android {
         release {
             keyAlias 'Dummy'
             keyPassword 'password'
-            storeFile file('/home/jatin/Area_51/Shorl/dummy_keystore.jks')
+            storeFile file("$rootDir/dummy_keystore.jks")
             storePassword 'password'
         }
     }
