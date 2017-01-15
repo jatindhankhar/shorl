@@ -182,18 +182,32 @@ public final class Utils {
 
     public static boolean isConnected(Context context) {
         ConnectivityManager conMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        // Consider we are not connected
+        boolean state;
+        try {
+            NetworkInfo mobile_info = conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            NetworkInfo wifi_info = conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-        if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED
-                || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            // Check Mobile State First
+            state = mobile_info != null && mobile_info.getState() == NetworkInfo.State.CONNECTED;
+            // If mobile is connected. Don't check further
+            if(state)
+                return true;
+            else {
+                // If mobile_info is null or not connected. Check Wifi State next
+                state = wifi_info != null && wifi_info.getState() == NetworkInfo.State.CONNECTED;
 
-            // notify user you are online
-            return true;
+                return state;
+            }
 
-        } else if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
-                || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
+
+        }
+
+        catch (NullPointerException npe)
+        {
+            FirebaseCrash.logcat(Log.ERROR,TAG,"NPE in checking Network State. Unknown state/info");
             return false;
         }
-        return false;
     }
 
     // Thanks to
