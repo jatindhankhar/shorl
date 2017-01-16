@@ -47,5 +47,5 @@ captures/
 # Google Service speicfic json files
 *.json
 # Keystore for signing
-#/keystore.properties. Temporarily allow keystore.properties for signing purposes
-!/dummy_keystore.jks
+ keystore.properties
+
