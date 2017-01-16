@@ -49,3 +49,4 @@ captures/
 # Keystore for signing
  keystore.properties
 
+/keystore.properties
